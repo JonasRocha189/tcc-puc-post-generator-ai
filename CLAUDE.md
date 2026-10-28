@@ -6,7 +6,7 @@ Guia para o Claude Code trabalhar neste repositório.
 
 **PostPilot** (nome provisório) é um gerador de posts para redes sociais com agente de IA e RAG, desenvolvido como TCC da pós-graduação em Desenvolvimento FullStack e como projeto de portfólio.
 
-O usuário cadastra **assuntos** (com público-alvo e tom de voz), sobe **documentos** (PDF, DOCX, TXT) e conversa com um **agente** que:
+O usuário cria **projetos** (a própria marca ou cada cliente, com público-alvo e tom de voz padrão) e, dentro de cada projeto, cadastra **assuntos**, sobe **documentos** (PDF, DOCX, TXT) e conversa com um **agente** que:
 
 - **Modo Ideação:** sugere temas pesquisando a web, o histórico de posts e o desempenho dos posts anteriores.
 - **Modo Criação:** escreve o post usando RAG nos documentos, exemplos de posts aprovados (voz da marca), adapta o texto para cada rede e gera a imagem.
@@ -119,16 +119,19 @@ Se um comando acima ainda não existir, crie-o seguindo este padrão e atualize 
 
 Todas as entidades de usuário têm `usuario_id` (o `sub` do Auth0) e timestamps.
 
-- **Assunto**: nome, descrição, público_alvo, tom_de_voz. CRUD completo.
-- **Post**: título, assunto_id, status (`rascunho`, `aprovado`, `publicado`), data_prevista. CRUD completo.
+- **Projeto**: nome, descrição, público_alvo, tom_de_voz (padrão). CRUD completo. Topo da hierarquia: a marca do usuário ou um cliente. Exclusão só sem assuntos e documentos (`409`).
+- **Assunto**: projeto_id, nome, descrição, público_alvo e tom_de_voz **opcionais** (vazios = valem os do projeto). CRUD completo.
+- **Post**: título, assunto_id, status (`rascunho`, `aprovado`, `publicado`), data_prevista. CRUD completo. Sem `projeto_id`: o projeto vem do assunto.
 - **VariacaoPost**: post_id, rede (`linkedin`, `instagram`, `x`), texto, hashtags, contagem de caracteres. **Detalhe de Post** (tela mestre-detalhe).
 - **Imagem**: variacao_id, chave S3, prompt usado, formato.
 - **Metrica**: variacao_id, publicado_em, impressões, curtidas, comentários, compartilhamentos, cliques, coletado_em.
-- **Documento**: nome, chave S3, tipo, status de processamento (`pendente`, `processando`, `pronto`, `erro`).
+- **Documento**: projeto_id, nome, chave S3, tipo, status de processamento (`pendente`, `processando`, `pronto`, `erro`).
 - **Chunk**: documento_id, conteúdo, embedding (`vector`), `tsvector`. `ON DELETE CASCADE` a partir de Documento.
-- **ExecucaoAgente** / **PassoAgente**: registro de cada execução e de cada tool chamada, exibido na tela.
+- **ExecucaoAgente** (com projeto_id) / **PassoAgente**: registro de cada execução e de cada tool chamada, exibido na tela.
 
-No banco, salve **apenas a chave do objeto S3** (ex.: `usuarios/{id}/posts/{id}/{uuid}.png`), nunca a URL.
+No banco, salve **apenas a chave do objeto S3** (ex.: `usuarios/{id}/projetos/{id}/posts/{id}/{uuid}.png`), nunca a URL.
+
+**Escopo por projeto:** listagens de assuntos, posts, documentos, relatório e execuções exigem `projeto_id`, e o backend sempre confere se o projeto pertence ao usuário do token. No frontend, o projeto atual vem do seletor no cabeçalho.
 
 ## Agente
 
@@ -137,14 +140,14 @@ No banco, salve **apenas a chave do objeto S3** (ex.: `usuarios/{id}/posts/{id}/
 - Prompts de sistema separados para **Ideação** e **Criação**, em `app/ai/agent/prompts/`.
 - Tools (uma por arquivo em `app/ai/tools/`, com schema de entrada em Pydantic):
   - `pesquisar_web(query)`: Tavily ou Brave, sempre retornando as fontes
-  - `listar_assuntos()` e `obter_assunto(id)`
+  - `obter_projeto()`, `listar_assuntos()` e `obter_assunto(id)` (público e tom resolvidos: do assunto ou, se vazios, do projeto)
   - `buscar_documentos(query)`: RAG híbrido (vetorial + full-text)
   - `buscar_posts_anteriores(assunto)`: exemplos de estilo, apenas posts aprovados ou publicados
   - `analisar_desempenho()`: agregados de métricas por assunto, dia, horário, rede e imagem
   - `adaptar_para_rede(texto, rede)`: limites e formato de cada rede
   - `gerar_imagem(prompt, formato)`: sem texto dentro da imagem
   - `salvar_rascunho(post)`
-- **Toda tool recebe o `usuario_id` do contexto autenticado**, nunca do LLM. O LLM jamais escolhe de qual usuário ler dados.
+- **Toda tool recebe o `usuario_id` e o `projeto_id` do contexto** (token e projeto validado na requisição), nunca do LLM. O LLM jamais escolhe de qual usuário ou projeto ler dados.
 - O agente **só salva como rascunho**. Aprovar e publicar é sempre ação do usuário.
 - Cada passo (tool, argumentos, duração, erro) vira log estruturado e um registro em `PassoAgente`.
 - Recomendações de desempenho só com amostra mínima (5 posts por grupo). Abaixo disso, o agente deve dizer que os dados são insuficientes.
@@ -160,7 +163,7 @@ No banco, salve **apenas a chave do objeto S3** (ex.: `usuarios/{id}/posts/{id}/
 1. O frontend pede ao backend uma URL pré-assinada de upload (o backend valida tipo e tamanho).
 2. O arquivo vai **direto do navegador para o S3**.
 3. O backend é avisado, baixa o arquivo, extrai o texto (pypdf, python-docx), faz chunking, gera embeddings e grava em `Chunk`.
-4. A busca combina similaridade vetorial e full-text, sempre filtrando por `usuario_id`.
+4. A busca combina similaridade vetorial e full-text, sempre filtrando por `usuario_id` e `projeto_id`.
 
 ## Convenções
 
@@ -220,7 +223,7 @@ Pipeline no GitHub Actions:
 10. Logs como fluxo de eventos (stdout)
 11. Testes de unidade, integração e aceite
 12. Ciclo de vida do usuário (cadastro, alteração de credenciais), via Auth0
-- **CRUD completo:** Assunto e Post
+- **CRUD completo:** Projeto, Assunto e Post
 - **Mestre-detalhe na mesma tela:** Post → Variações por rede
 - **Recurso de IA:** agente com RAG, busca web e geração de imagem
 

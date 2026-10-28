@@ -1,4 +1,5 @@
 import { SidebarProvider, useSidebar } from "@/context/SidebarContext";
+import ProjetoAtualProvider from "@/features/projetos/ProjetoAtualProvider";
 import { cn } from "@/utils";
 import { Outlet } from "react-router";
 import AppHeader from "./AppHeader";
@@ -31,9 +32,11 @@ const LayoutContent: React.FC = () => {
 
 const AppLayout: React.FC = () => {
   return (
-    <SidebarProvider>
-      <LayoutContent />
-    </SidebarProvider>
+    <ProjetoAtualProvider>
+      <SidebarProvider>
+        <LayoutContent />
+      </SidebarProvider>
+    </ProjetoAtualProvider>
   );
 };
 

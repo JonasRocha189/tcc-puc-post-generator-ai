@@ -2,7 +2,9 @@
 
 > Status: **em implementação**. Atualize esta página sempre que uma rota for criada, alterada ou removida.
 >
-> **Implementadas:** `/login`, `/cadastro`, `/erro`, `/`, `/dashboard` e `/calendario` (com dados de exemplo), `/perfil` e `*`.
+> **Implementadas:** `/login`, `/cadastro`, `/erro`, `/`, `/projetos`, `/assuntos` e `/posts` (lista, novo e edição; posts com o mestre-detalhe das variações), o seletor de projeto no cabeçalho, `/calendario` (com os posts), `/dashboard` (ainda com dados de exemplo), `/perfil` e `*`.
+>
+> **Dados de exemplo:** sem `VITE_API_URL`, o `npm run dev` usa uma API fictícia no navegador (`lib/api/mockDb.ts`, guardada no `localStorage`), com as mesmas regras da API real (`404`, `409`). Com `VITE_API_URL`, as mesmas telas chamam o backend.
 >
 > Todas as telas estão em **português e inglês**. O seletor de idioma fica no cabeçalho (entre o tema e o usuário) e no rodapé das telas de login e cadastro.
 > As páginas de demonstração do TailAdmin ficam em `/template/*` só como referência visual e devem ser removidas antes da entrega.
@@ -22,17 +24,22 @@ Roteamento com React Router. Páginas carregadas sob demanda (`React.lazy`) para
 
 Dentro do `AppLayout`. Sem sessão, o usuário é redirecionado para `/login`.
 
+**Projeto atual:** um seletor no cabeçalho (no lugar da busca do template) define o projeto em que o usuário está trabalhando (como em Vercel ou Linear). As rotas de conteúdo não mudam; elas mostram só os dados do projeto selecionado, e as chamadas à API enviam o `projeto_id`. A escolha fica salva no navegador. Sem nenhum projeto cadastrado, as telas de conteúdo mostram um convite para criar o primeiro projeto.
+
 | Rota | Página | API usada | Requisito do TCC |
 | --- | --- | --- | --- |
 | `/` | Redireciona para `/dashboard` | | |
+| `/projetos` | Lista de projetos (marca própria ou clientes) | `GET /projetos`, `DELETE /projetos/{id}` | CRUD |
+| `/projetos/novo` | Cadastro de projeto: nome, descrição, público-alvo e tom de voz padrão | `POST /projetos` | CRUD |
+| `/projetos/:id` | Edição de projeto | `GET`, `PUT /projetos/{id}` | CRUD |
 | `/dashboard` | Posts por status, próximos posts previstos, últimas execuções do agente e **todas as métricas de desempenho** (impressões e engajamento por assunto, rede, dia e horário) | `GET /posts`, `GET /agente/execucoes`, `GET /relatorio/desempenho` | Relatório de desempenho |
 | `/assuntos` | Lista de assuntos | `GET /assuntos`, `DELETE /assuntos/{id}` | CRUD |
 | `/assuntos/novo` | Cadastro de assunto | `POST /assuntos` | CRUD |
 | `/assuntos/:id` | Edição de assunto | `GET`, `PUT /assuntos/{id}` | CRUD |
 | `/posts` | Lista de posts, com filtros na URL (`?status=rascunho&assunto=…`) | `GET /posts`, `DELETE /posts/{id}` | CRUD |
 | `/posts/novo` | Cadastro de post com suas variações | `POST /posts` | CRUD + mestre-detalhe |
-| `/posts/:id` | **Mestre-detalhe**: dados do post no topo e uma aba por rede (LinkedIn, Instagram, X) com texto, hashtags, contagem de caracteres, imagem e métricas | `GET`, `PUT /posts/{id}`, endpoints de imagens e métricas | Mestre-detalhe |
-| `/calendario` | Posts no calendário pela `data_prevista`, com cor por status. Clicar em um post abre `/posts/:id` | `GET /posts?de=…&ate=…` | |
+| `/posts/:id` | **Mestre-detalhe**: dados do post no topo e uma aba por rede (LinkedIn, Instagram, X) com texto, hashtags e contador de caracteres pelo limite da rede. Imagem e métricas por variação ainda a fazer | `GET`, `PUT /posts/{id}`, depois endpoints de imagens e métricas | Mestre-detalhe |
+| `/calendario` | Posts no calendário pela `data_prevista`, com cor por status. Clicar em um post abre um modal de detalhes com link para `/posts/:id` | `GET /posts` | |
 | `/documentos` | Lista com status de processamento e upload na mesma tela | `/documentos/*` | IA (RAG) |
 | `/agente` | Conversa com o agente, com troca de modo (`?modo=ideacao` ou `criacao`) | `POST /agente/execucoes` | IA |
 | `/agente/execucoes` | Histórico de execuções | `GET /agente/execucoes` | |
@@ -42,7 +49,9 @@ Dentro do `AppLayout`. Sem sessão, o usuário é redirecionado para `/login`.
 ## Menu lateral
 
 ```
+[Projeto atual ▾]   ← seletor no cabeçalho
 Dashboard
+Projetos
 Conteúdo
   ├─ Posts
   ├─ Calendário
@@ -70,7 +79,8 @@ Perfil · Sair
 ## Ordem de implementação
 
 1. Auth0 + layout protegido + `/login` + `/perfil`
-2. `/assuntos`
-3. `/posts` e `/posts/:id`, depois `/calendario`
-4. `/documentos` e `/agente`
-5. `/dashboard`
+2. `/projetos` e o seletor de projeto no cabeçalho
+3. `/assuntos`
+4. `/posts` e `/posts/:id`, depois `/calendario`
+5. `/documentos` e `/agente`
+6. `/dashboard`

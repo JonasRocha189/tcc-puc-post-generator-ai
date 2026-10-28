@@ -7,12 +7,15 @@ import {
   BoxCubeIcon,
   CalenderIcon,
   ChevronDownIcon,
+  DocsIcon,
+  FolderIcon,
   GridIcon,
   HorizontaLDots,
   ListIcon,
   PageIcon,
   PieChartIcon,
   TableIcon,
+  TaskIcon,
   UserCircleIcon,
 } from "../icons";
 import { cn } from "../utils";
@@ -46,10 +49,28 @@ const navItems: NavItem[] = [
     path: "/dashboard",
   },
   {
+    icon: <FolderIcon fontSize={24} />,
+    name: "Projetos",
+    appKey: "nav.projects",
+    path: "/projetos",
+  },
+  {
+    icon: <DocsIcon fontSize={24} />,
+    name: "Posts",
+    appKey: "nav.posts",
+    path: "/posts",
+  },
+  {
     icon: <CalenderIcon fontSize={24} />,
     name: "Calendário",
     appKey: "nav.calendar",
     path: "/calendario",
+  },
+  {
+    icon: <TaskIcon fontSize={24} />,
+    name: "Assuntos",
+    appKey: "nav.subjects",
+    path: "/assuntos",
   },
   {
     icon: <UserCircleIcon fontSize={24} />,
@@ -169,9 +190,10 @@ const AppSidebar: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
-  // const isActive = (path: string) => location.pathname === path;
+  // Ativo também nas subpáginas (ex.: /projetos/novo destaca "Projetos")
   const isActive = useCallback(
-    (path: string) => location.pathname === path,
+    (path: string) =>
+      location.pathname === path || location.pathname.startsWith(`${path}/`),
     [location.pathname],
   );
 

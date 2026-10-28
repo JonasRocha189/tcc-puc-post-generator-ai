@@ -1,5 +1,6 @@
 import AuthProvider from "@/components/auth/AuthProvider";
 import RequireAuth from "@/components/auth/RequireAuth";
+import ExigeProjeto from "@/features/projetos/components/ExigeProjeto";
 import AppLayout from "@/layout/AppLayout";
 import Erro from "@/pages/OtherPage/Erro";
 import type { ComponentType } from "react";
@@ -50,9 +51,25 @@ const router = createBrowserRouter([
             element: <AppLayout />,
             children: [
               { index: true, element: <Navigate to="/dashboard" replace /> },
-              { path: "/dashboard", ...page(() => import("@/pages/Dashboard/Dashboard")) },
-              { path: "/calendario", ...page(() => import("@/pages/Calendario")) },
+              { path: "/projetos", ...page(() => import("@/pages/Projetos/Projetos")) },
+              { path: "/projetos/novo", ...page(() => import("@/pages/Projetos/ProjetoFormPage")) },
+              { path: "/projetos/:id", ...page(() => import("@/pages/Projetos/ProjetoFormPage")) },
               { path: "/perfil", ...page(() => import("@/pages/Perfil")) },
+
+              // Conteúdo: exige um projeto selecionado
+              {
+                element: <ExigeProjeto />,
+                children: [
+                  { path: "/dashboard", ...page(() => import("@/pages/Dashboard/Dashboard")) },
+                  { path: "/posts", ...page(() => import("@/pages/Posts/Posts")) },
+                  { path: "/posts/novo", ...page(() => import("@/pages/Posts/PostFormPage")) },
+                  { path: "/posts/:id", ...page(() => import("@/pages/Posts/PostFormPage")) },
+                  { path: "/calendario", ...page(() => import("@/pages/Calendario")) },
+                  { path: "/assuntos", ...page(() => import("@/pages/Assuntos/Assuntos")) },
+                  { path: "/assuntos/novo", ...page(() => import("@/pages/Assuntos/AssuntoFormPage")) },
+                  { path: "/assuntos/:id", ...page(() => import("@/pages/Assuntos/AssuntoFormPage")) },
+                ],
+              },
               ...templateRoutes,
             ],
           },

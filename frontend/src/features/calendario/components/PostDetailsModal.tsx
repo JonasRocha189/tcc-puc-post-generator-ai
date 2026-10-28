@@ -4,6 +4,7 @@ import { Modal } from "@/components/ui/modal";
 import { REDE_LABEL, STATUS_POST_COR } from "@/lib/dominio";
 import { useFormat } from "@/lib/format";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router";
 import type { PostAgendado } from "../types";
 
 export default function PostDetailsModal({
@@ -69,12 +70,12 @@ export default function PostDetailsModal({
             <Button variant="outline" size="sm" onClick={onClose}>
               {t("common.close")}
             </Button>
-            {/* TODO: navegar para /posts/:id quando a página existir */}
-            <span title={t("calendar.details.postPageSoon")}>
-              <Button size="sm" disabled className="w-full">
-                {t("calendar.details.openPost")}
-              </Button>
-            </span>
+            <Link
+              to={`/posts/${post.id}`}
+              className="inline-flex items-center justify-center rounded-lg bg-brand-500 px-4 py-3 text-sm font-medium text-white shadow-theme-xs hover:bg-brand-600"
+            >
+              {t("calendar.details.openPost")}
+            </Link>
           </div>
         </div>
       )}
