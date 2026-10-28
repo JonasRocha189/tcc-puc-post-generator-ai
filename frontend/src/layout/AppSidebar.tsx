@@ -4,10 +4,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
 import {
+  AiIcon,
   BoxCubeIcon,
   CalenderIcon,
   ChevronDownIcon,
   DocsIcon,
+  FileIcon,
   FolderIcon,
   GridIcon,
   HorizontaLDots,
@@ -16,6 +18,7 @@ import {
   PieChartIcon,
   TableIcon,
   TaskIcon,
+  TimeIcon,
   UserCircleIcon,
 } from "../icons";
 import { cn } from "../utils";
@@ -71,6 +74,24 @@ const navItems: NavItem[] = [
     name: "Assuntos",
     appKey: "nav.subjects",
     path: "/assuntos",
+  },
+  {
+    icon: <FileIcon fontSize={24} />,
+    name: "Documentos",
+    appKey: "nav.documents",
+    path: "/documentos",
+  },
+  {
+    icon: <AiIcon fontSize={24} />,
+    name: "Agente",
+    appKey: "nav.agent",
+    path: "/agente",
+  },
+  {
+    icon: <TimeIcon fontSize={24} />,
+    name: "Execuções",
+    appKey: "nav.agentRuns",
+    path: "/agente/execucoes",
   },
   {
     icon: <UserCircleIcon fontSize={24} />,
@@ -133,6 +154,11 @@ const othersItems: NavItem[] = [
   },
 ];
 
+const TODOS_OS_CAMINHOS = [...navItems, ...othersItems].flatMap((item) => [
+  ...(item.path ? [item.path] : []),
+  ...(item.subItems?.map((s) => s.path) ?? []),
+]);
+
 type OpenSubmenu = {
   type: "main" | "others";
   index: number;
@@ -190,10 +216,15 @@ const AppSidebar: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
-  // Ativo também nas subpáginas (ex.: /projetos/novo destaca "Projetos")
+  // Ativo também nas subpáginas (ex.: /projetos/novo destaca "Projetos"),
+  // mas só o item mais específico (/agente/execucoes não destaca "Agente")
   const isActive = useCallback(
-    (path: string) =>
-      location.pathname === path || location.pathname.startsWith(`${path}/`),
+    (path: string) => {
+      const casa = (p: string) =>
+        location.pathname === p || location.pathname.startsWith(`${p}/`);
+      const melhor = TODOS_OS_CAMINHOS.filter(casa).sort((a, b) => b.length - a.length)[0];
+      return melhor === path;
+    },
     [location.pathname],
   );
 

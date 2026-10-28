@@ -15,7 +15,10 @@
     "toggleSidebar": "Toggle menu",
     "moreOptions": "More options",
     "posts": "Posts",
-    "subjects": "Subjects"
+    "subjects": "Subjects",
+    "documents": "Documents",
+    "agent": "Agent",
+    "agentRuns": "Runs"
   },
   "projects": {
     "title": "Projects",
@@ -164,10 +167,17 @@
     "runStatus": {
       "concluida": "Completed",
       "erro": "Error",
-      "limite_atingido": "Limit reached"
+      "limite_atingido": "Limit reached",
+      "executando": "Running"
     },
     "posts_one": "{count} post",
-    "posts_other": "{count} posts"
+    "posts_other": "{count} posts",
+    "docStatus": {
+      "pendente": "Pending",
+      "processando": "Processing",
+      "pronto": "Ready",
+      "erro": "Error"
+    }
   },
   "dashboard": {
     "title": "Dashboard",
@@ -364,6 +374,123 @@
         "tooManyHashtags": "Use at most 30 hashtags.",
         "variationRequired": "Add a variation for at least one network."
       }
+    }
+  },
+  "documents": {
+    "title": "Documents",
+    "subtitle": "Reference material for the {project} project. The agent uses these documents to write posts.",
+    "loadError": "Could not load documents. Please try again.",
+    "empty": "No documents yet. Upload PDF, DOCX or TXT files above.",
+    "ragHint": "After upload, documents are split into chunks and indexed. Only ready documents are used in the agent's searches, and only in this project.",
+    "deleteLabel": "Delete {name}",
+    "columns": {
+      "name": "Document",
+      "size": "Size",
+      "chunks": "Chunks",
+      "uploaded": "Uploaded",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "upload": {
+      "title": "Drag files here or click to choose",
+      "drop": "Drop to upload",
+      "hint": "PDF, DOCX or TXT, up to {max} MB each",
+      "inputLabel": "Upload documents",
+      "progress": "Uploading {name}",
+      "tooLarge": "File larger than {max} MB",
+      "invalidType": "File type not accepted. Use PDF, DOCX or TXT",
+      "failed": "Could not upload the file",
+      "dismiss": "Dismiss"
+    },
+    "delete": {
+      "title": "Delete \"{name}\"?",
+      "message": "The file and its indexed chunks will be removed, and the agent will stop using it. This can't be undone.",
+      "confirm": "Delete"
+    }
+  },
+  "agent": {
+    "title": "Agent",
+    "subtitle": "Ask for ideas or finished posts for the {project} project.",
+    "modeLabel": "Agent mode",
+    "inputLabel": "Your request to the agent",
+    "placeholder": {
+      "ideacao": "e.g. Suggest 5 topics for next week",
+      "criacao": "e.g. Write a LinkedIn and X post about the security checklist"
+    },
+    "intro": {
+      "ideacao": {
+        "title": "Let's find your next topic",
+        "message": "In Ideation mode, the agent searches the web, looks at your past posts and what performed best to suggest topics."
+      },
+      "criacao": {
+        "title": "Let's write a post",
+        "message": "In Creation mode, the agent uses your documents and the style of approved posts, adapts the text for each network, generates the image and saves everything as a draft."
+      }
+    },
+    "suggestions": {
+      "ideacao": [
+        "Suggest 5 topics for next week",
+        "What is working best on my networks?",
+        "Post ideas about industry trends"
+      ],
+      "criacao": [
+        "Write a LinkedIn and X post based on the documents",
+        "Create an Instagram carousel about behind the scenes",
+        "Turn the latest topic into a post"
+      ]
+    },
+    "send": "Send",
+    "working": "Working...",
+    "thinking": "Thinking about the next step...",
+    "draftOnly": "The agent only saves drafts; approving and publishing is up to you.",
+    "history": "View history",
+    "sendError": "Could not reach the agent. Please try again.",
+    "loadError": "Could not load the run. Please try again.",
+    "failed": "The agent hit an error and stopped. Check the step in red and try again.",
+    "limitReached": "I reached the {max}-step limit without finishing. Try a more specific request.",
+    "openDraft": "Open draft",
+    "viewDetails": "View details",
+    "stepNumber": "Step {n}",
+    "arguments": "Arguments",
+    "tools": {
+      "obter_projeto": "Reading the project",
+      "listar_assuntos": "Listing subjects",
+      "obter_assunto": "Reading the subject",
+      "buscar_documentos": "Searching documents",
+      "buscar_posts_anteriores": "Finding approved posts",
+      "analisar_desempenho": "Analyzing performance",
+      "pesquisar_web": "Searching the web",
+      "adaptar_para_rede": "Adapting for the network",
+      "gerar_imagem": "Generating the image",
+      "salvar_rascunho": "Saving the draft"
+    },
+    "runs": {
+      "title": "Agent runs",
+      "subtitle": "Everything the agent did in the {project} project.",
+      "new": "New conversation",
+      "empty": "The agent hasn't been used in this project yet.",
+      "columns": {
+        "request": "Request",
+        "mode": "Mode",
+        "steps": "Steps",
+        "started": "Started",
+        "status": "Status"
+      }
+    },
+    "detail": {
+      "title": "Agent run",
+      "request": "Request",
+      "answer": "Answer",
+      "steps": "Step by step",
+      "stepsHint": "Every tool the agent called, in order, with its result and how long it took.",
+      "noSteps": "No steps recorded.",
+      "status": "Status",
+      "mode": "Mode",
+      "started": "Started",
+      "duration": "Duration",
+      "iterations": "Iterations",
+      "iterationsValue": "{n} of {max}",
+      "back": "Back to history"
     }
   }
 }

@@ -55,8 +55,11 @@ export const projetosMock: ProjetosService = {
   async excluir(id) {
     await latencia();
     mockDb.projetos.encontrar(id, NOME);
-    // Regra da API: só exclui projeto sem assuntos (nem documentos)
-    if (mockDb.assuntos.todos().some((a) => a.projeto_id === id)) {
+    // Regra da API: só exclui projeto sem assuntos nem documentos
+    if (
+      mockDb.assuntos.todos().some((a) => a.projeto_id === id) ||
+      mockDb.documentos.todos().some((d) => d.projeto_id === id)
+    ) {
       throw new ApiError(409, "O projeto ainda tem assuntos ou documentos");
     }
     mockDb.projetos.remover(id);

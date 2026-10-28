@@ -2,7 +2,7 @@
 
 > Status: **em implementação**. Atualize esta página sempre que uma rota for criada, alterada ou removida.
 >
-> **Implementadas:** `/login`, `/cadastro`, `/erro`, `/`, `/projetos`, `/assuntos` e `/posts` (lista, novo e edição; posts com o mestre-detalhe das variações), o seletor de projeto no cabeçalho, `/calendario` (com os posts), `/dashboard` (ainda com dados de exemplo), `/perfil` e `*`.
+> **Implementadas:** todas as rotas planejadas. `/login`, `/cadastro`, `/erro`, `/`, `/projetos`, `/assuntos` e `/posts` (lista, novo e edição; posts com o mestre-detalhe das variações), o seletor de projeto no cabeçalho, `/calendario` (com os posts), `/documentos` (upload e status), `/agente`, `/agente/execucoes` e `/agente/execucoes/:id` (passos ao vivo), `/dashboard` (ainda com dados de exemplo), `/perfil` e `*`.
 >
 > **Dados de exemplo:** sem `VITE_API_URL`, o `npm run dev` usa uma API fictícia no navegador (`lib/api/mockDb.ts`, guardada no `localStorage`), com as mesmas regras da API real (`404`, `409`). Com `VITE_API_URL`, as mesmas telas chamam o backend.
 >
@@ -72,7 +72,7 @@ Perfil · Sair
 - **Métricas ficam no detalhe do post**, na aba de cada variação, pois cada métrica pertence a uma variação.
 - **"Novo" e "editar" usam o mesmo formulário**: `/novo` começa vazio e `/:id` carrega os dados. Um schema Zod por entidade.
 - **Filtros na query string**, não em estado do componente: links compartilháveis, botão voltar funciona e os testes Playwright abrem a lista já filtrada.
-- **Calendário reaproveita o do template** (FullCalendar, já instalado). Mostra os posts no mês, com cor por status; não cria eventos próprios. Clicar num post abre um modal com os detalhes; o botão "Abrir post" será ligado a `/posts/:id` quando essa página existir.
+- **Calendário reaproveita o do template** (FullCalendar, já instalado). Mostra os posts no mês, com cor por status; não cria eventos próprios. Clicar num post abre um modal com os detalhes e o botão "Abrir post", que leva a `/posts/:id`.
 - **Sem rota `/404`.** O `*` mostra o 404 na URL que o usuário digitou, preservando o endereço e o histórico. Erros de verdade (Auth0, falhas inesperadas) vão para `/erro`.
 - **Sem rota `/relatorio`.** Desde 2026-10-27, todas as métricas de desempenho ficam no `/dashboard` (por enquanto). As métricas de cada variação continuam sendo registradas no detalhe do post.
 

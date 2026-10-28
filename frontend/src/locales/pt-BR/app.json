@@ -15,7 +15,10 @@
     "toggleSidebar": "Abrir ou fechar o menu",
     "moreOptions": "Mais opções",
     "posts": "Posts",
-    "subjects": "Assuntos"
+    "subjects": "Assuntos",
+    "documents": "Documentos",
+    "agent": "Agente",
+    "agentRuns": "Execuções"
   },
   "projects": {
     "title": "Projetos",
@@ -164,10 +167,17 @@
     "runStatus": {
       "concluida": "Concluída",
       "erro": "Erro",
-      "limite_atingido": "Limite atingido"
+      "limite_atingido": "Limite atingido",
+      "executando": "Executando"
     },
     "posts_one": "{count} post",
-    "posts_other": "{count} posts"
+    "posts_other": "{count} posts",
+    "docStatus": {
+      "pendente": "Pendente",
+      "processando": "Processando",
+      "pronto": "Pronto",
+      "erro": "Erro"
+    }
   },
   "dashboard": {
     "title": "Dashboard",
@@ -364,6 +374,123 @@
         "tooManyHashtags": "Use no máximo 30 hashtags.",
         "variationRequired": "Adicione a variação de pelo menos uma rede."
       }
+    }
+  },
+  "documents": {
+    "title": "Documentos",
+    "subtitle": "Material de referência do projeto {project}. O agente usa estes documentos para escrever os posts.",
+    "loadError": "Não foi possível carregar os documentos. Tente novamente.",
+    "empty": "Nenhum documento ainda. Envie PDFs, DOCX ou TXT acima.",
+    "ragHint": "Depois de enviados, os documentos são divididos em trechos e indexados. Só os documentos prontos entram nas buscas do agente, e só neste projeto.",
+    "deleteLabel": "Excluir {name}",
+    "columns": {
+      "name": "Documento",
+      "size": "Tamanho",
+      "chunks": "Trechos",
+      "uploaded": "Enviado",
+      "status": "Status",
+      "actions": "Ações"
+    },
+    "upload": {
+      "title": "Arraste arquivos aqui ou clique para escolher",
+      "drop": "Solte para enviar",
+      "hint": "PDF, DOCX ou TXT, até {max} MB cada",
+      "inputLabel": "Enviar documentos",
+      "progress": "Enviando {name}",
+      "tooLarge": "Arquivo maior que {max} MB",
+      "invalidType": "Tipo não aceito. Use PDF, DOCX ou TXT",
+      "failed": "Não foi possível enviar o arquivo",
+      "dismiss": "Dispensar"
+    },
+    "delete": {
+      "title": "Excluir \"{name}\"?",
+      "message": "O arquivo e os trechos indexados serão removidos, e o agente deixará de usá-lo. Esta ação não pode ser desfeita.",
+      "confirm": "Excluir"
+    }
+  },
+  "agent": {
+    "title": "Agente",
+    "subtitle": "Peça ideias ou posts prontos para o projeto {project}.",
+    "modeLabel": "Modo do agente",
+    "inputLabel": "Seu pedido para o agente",
+    "placeholder": {
+      "ideacao": "Ex.: Sugira 5 temas para a próxima semana",
+      "criacao": "Ex.: Escreva um post para LinkedIn e X sobre o checklist de segurança"
+    },
+    "intro": {
+      "ideacao": {
+        "title": "Vamos achar o próximo tema",
+        "message": "No modo Ideação, o agente pesquisa na web, olha seus posts anteriores e o que teve melhor desempenho para sugerir temas."
+      },
+      "criacao": {
+        "title": "Vamos escrever um post",
+        "message": "No modo Criação, o agente usa seus documentos e o estilo dos posts aprovados, adapta o texto para cada rede, gera a imagem e salva tudo como rascunho."
+      }
+    },
+    "suggestions": {
+      "ideacao": [
+        "Sugira 5 temas para a próxima semana",
+        "O que está funcionando melhor nas minhas redes?",
+        "Ideias de posts sobre tendências do setor"
+      ],
+      "criacao": [
+        "Escreva um post para LinkedIn e X com base nos documentos",
+        "Crie um carrossel para Instagram sobre bastidores",
+        "Transforme o tema mais recente em um post"
+      ]
+    },
+    "send": "Enviar",
+    "working": "Trabalhando...",
+    "thinking": "Pensando no próximo passo...",
+    "draftOnly": "O agente só salva rascunhos; aprovar e publicar é com você.",
+    "history": "Ver histórico",
+    "sendError": "Não foi possível falar com o agente. Tente novamente.",
+    "loadError": "Não foi possível carregar a execução. Tente novamente.",
+    "failed": "O agente encontrou um erro e parou. Veja o passo em vermelho e tente de novo.",
+    "limitReached": "Atingi o limite de {max} passos sem concluir. Tente um pedido mais específico.",
+    "openDraft": "Abrir rascunho",
+    "viewDetails": "Ver detalhes",
+    "stepNumber": "Passo {n}",
+    "arguments": "Argumentos",
+    "tools": {
+      "obter_projeto": "Lendo o projeto",
+      "listar_assuntos": "Listando os assuntos",
+      "obter_assunto": "Lendo o assunto",
+      "buscar_documentos": "Buscando nos documentos",
+      "buscar_posts_anteriores": "Buscando posts aprovados",
+      "analisar_desempenho": "Analisando o desempenho",
+      "pesquisar_web": "Pesquisando na web",
+      "adaptar_para_rede": "Adaptando para a rede",
+      "gerar_imagem": "Gerando a imagem",
+      "salvar_rascunho": "Salvando o rascunho"
+    },
+    "runs": {
+      "title": "Execuções do agente",
+      "subtitle": "Tudo o que o agente fez no projeto {project}.",
+      "new": "Nova conversa",
+      "empty": "O agente ainda não foi usado neste projeto.",
+      "columns": {
+        "request": "Pedido",
+        "mode": "Modo",
+        "steps": "Passos",
+        "started": "Início",
+        "status": "Status"
+      }
+    },
+    "detail": {
+      "title": "Execução do agente",
+      "request": "Pedido",
+      "answer": "Resposta",
+      "steps": "Passo a passo",
+      "stepsHint": "Cada ferramenta que o agente chamou, na ordem, com o resultado e o tempo gasto.",
+      "noSteps": "Nenhum passo registrado.",
+      "status": "Status",
+      "mode": "Modo",
+      "started": "Início",
+      "duration": "Duração",
+      "iterations": "Iterações",
+      "iterationsValue": "{n} de {max}",
+      "back": "Voltar ao histórico"
     }
   }
 }

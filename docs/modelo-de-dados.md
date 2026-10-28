@@ -76,7 +76,10 @@ classDiagram
         +str nome
         +str chave_s3
         +str tipo
+        +int tamanho_bytes
         +StatusDocumento status
+        +str? mensagem_erro
+        +int? total_chunks
     }
 
     class Chunk {
@@ -93,9 +96,12 @@ classDiagram
         +UUID projeto_id
         +ModoAgente modo
         +str pedido
-        +str resposta
+        +str? resposta
+        +UUID? post_id
         +int iteracoes
-        +str status
+        +StatusExecucao status
+        +datetime iniciada_em
+        +datetime? finalizada_em
     }
 
     class PassoAgente {
@@ -105,8 +111,9 @@ classDiagram
         +str tool
         +json argumentos
         +json resultado
+        +str? resultado_resumo
         +int duracao_ms
-        +str erro
+        +str? erro
     }
 
     class StatusPost {
@@ -137,6 +144,14 @@ classDiagram
         criacao
     }
 
+    class StatusExecucao {
+        <<enumeration>>
+        executando
+        concluida
+        erro
+        limite_atingido
+    }
+
     Projeto "1" --> "*" Assunto
     Projeto "1" --> "*" Documento
     Projeto "1" --> "*" ExecucaoAgente
@@ -160,4 +175,5 @@ classDiagram
 | Metrica | Registrada manualmente pelo usuário depois de publicar. |
 | Documento | Pertence a um projeto e só é usado pelo RAG desse projeto. O status acompanha o processamento: `pendente` → `processando` → `pronto` ou `erro`. Chave S3: `usuarios/{id}/projetos/{id}/documentos/{uuid}.{ext}`. |
 | Chunk | Apagado em cascata com o Documento. A dimensão do `embedding` vem da configuração; trocar o modelo de embeddings exige reprocessar tudo. Índices: HNSW no `embedding` e GIN no `tsvector`. |
-| PassoAgente | Um registro por tool chamada, exibido na tela da execução. |
+| ExecucaoAgente | Criada como `executando` e atualizada pelo loop em segundo plano. `post_id` aponta para o rascunho salvo pelo agente (modo criação). |
+| PassoAgente | Um registro por tool chamada, gravado assim que a tool termina (é o que a tela mostra ao vivo). `resultado` guarda a saída completa; `resultado_resumo` é o texto curto exibido. |

@@ -15,9 +15,10 @@ sequenceDiagram
     participant T as Tools
     participant DB as PostgreSQL
 
-    U->>API: Pedido + modo + projeto_id
-    API->>DB: Confere se o projeto é do usuário e cria ExecucaoAgente
-    API->>A: Executa com usuario_id (token) e projeto_id
+    U->>API: POST /agente/execucoes (pedido + modo + projeto_id)
+    API->>DB: Confere se o projeto é do usuário e cria ExecucaoAgente (executando)
+    API-->>U: 202 + execução
+    API->>A: Executa em segundo plano com usuario_id (token) e projeto_id
     loop até responder ou 8 iterações
         A->>LLM: Mensagens + schema das tools
         alt LLM pede tool
@@ -30,10 +31,16 @@ sequenceDiagram
         end
     end
     A->>DB: Finaliza ExecucaoAgente
-    API-->>U: Resposta + passos executados
+    loop a cada ~0,7 s até o status final
+        U->>API: GET /agente/execucoes/{id}
+        API-->>U: Status + passos gravados até agora
+    end
 ```
 
-- **Máximo de 8 iterações.** Ao atingir o limite, a execução termina e o usuário é avisado.
+- **Execução em segundo plano, passos ao vivo.** `POST /agente/execucoes` responde `202` na hora com `status: "executando"` e o loop roda em segundo plano, gravando cada `PassoAgente` assim que a tool termina. A tela consulta `GET /agente/execucoes/{id}` a cada ~0,7 s até o status final e mostra os passos conforme aparecem. Sem WebSocket nem SSE, e funciona com 2 réplicas, porque o estado fica no banco.
+- **Máximo de 8 iterações.** Ao atingir o limite, a execução termina com `limite_atingido` e o usuário é avisado. Várias tools pedidas pelo LLM na mesma resposta (ex.: adaptar para LinkedIn e para X) contam como uma iteração.
+- **Erro numa tool:** a execução termina com `erro`, e o passo que falhou guarda a mensagem em `erro`.
+- **Cada pedido é independente:** a conversa na tela é uma sequência de execuções; o agente não recebe o histórico das anteriores.
 - **Prompts de sistema** separados por modo em `app/ai/agent/prompts/`.
 - **Segurança:** o `usuario_id` e o `projeto_id` são injetados pelo backend em toda tool. Eles não aparecem no schema que o LLM vê: o agente só enxerga os dados do projeto em que foi chamado, e os documentos de um cliente nunca entram nos posts de outro.
 - **Voz da marca:** o público-alvo e o tom de voz vêm do assunto; quando o assunto não define, valem os do projeto.
