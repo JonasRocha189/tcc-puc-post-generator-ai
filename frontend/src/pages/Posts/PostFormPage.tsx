@@ -3,13 +3,22 @@ import PageMeta from "@/components/common/PageMeta";
 import { useAssunto, useAssuntos } from "@/features/assuntos/api";
 import { useAtualizarPost, useCriarPost, usePost } from "@/features/posts/api";
 import PostForm from "@/features/posts/components/PostForm";
-import { toFormValues, toPostInput, type PostFormValues } from "@/features/posts/schema";
+import {
+  toFormValues,
+  toPostInput,
+  type PostFormValues,
+} from "@/features/posts/schema";
 import { useProjetoAtual } from "@/features/projetos/useProjetoAtual";
 import { ApiError } from "@/lib/api/http";
 import NotFound from "@/pages/OtherPage/NotFound";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams, useSearchParams } from "react-router";
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router";
 
 /** /posts/novo (sem id) e /posts/:id (edição): tela mestre-detalhe. */
 export default function PostFormPage() {
@@ -17,6 +26,9 @@ export default function PostFormPage() {
   const [params] = useSearchParams();
   const { t } = useTranslation("app", { keyPrefix: "posts" });
   const navigate = useNavigate();
+  const location = useLocation();
+  const acabouDeCriar =
+    (location.state as { criado?: boolean } | null)?.criado === true;
   const { projetoAtual } = useProjetoAtual();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -24,7 +36,9 @@ export default function PostFormPage() {
   const post = usePost(id);
   // Na edição, os assuntos oferecidos são os do projeto do post
   const assuntoDoPost = useAssunto(post.data?.assunto_id);
-  const projetoId = isEdicao ? assuntoDoPost.data?.projeto_id : projetoAtual?.id;
+  const projetoId = isEdicao
+    ? assuntoDoPost.data?.projeto_id
+    : projetoAtual?.id;
   const assuntos = useAssuntos(projetoId);
 
   const criar = useCriarPost();
@@ -34,9 +48,17 @@ export default function PostFormPage() {
   const onSubmit = async (values: PostFormValues) => {
     setSubmitError(null);
     try {
-      if (id) await atualizar.mutateAsync({ id, input: toPostInput(values) });
-      else await criar.mutateAsync(toPostInput(values));
-      navigate("/posts");
+      if (id) {
+        await atualizar.mutateAsync({ id, input: toPostInput(values) });
+        navigate("/posts");
+      } else {
+        // Abre o post criado: imagens e métricas só existem nas variações salvas
+        const novo = await criar.mutateAsync(toPostInput(values));
+        navigate(`/posts/${novo.id}`, {
+          replace: true,
+          state: { criado: true },
+        });
+      }
     } catch {
       setSubmitError(t("saveError"));
     }
@@ -46,7 +68,10 @@ export default function PostFormPage() {
     return <NotFound />;
   }
 
-  const carregando = (isEdicao && (post.isLoading || assuntoDoPost.isLoading)) || assuntos.isLoading || !assuntos.data;
+  const carregando =
+    (isEdicao && (post.isLoading || assuntoDoPost.isLoading)) ||
+    assuntos.isLoading ||
+    !assuntos.data;
   const erro = (isEdicao && post.isError) || assuntos.isError;
   // ?assunto=… pré-seleciona o assunto (ex.: vindo da lista filtrada)
   const assuntoPadrao = params.get("assunto") ?? "";
@@ -67,14 +92,25 @@ export default function PostFormPage() {
             <div className="h-80 animate-pulse rounded-2xl bg-gray-100 dark:bg-gray-800" />
           </div>
         ) : (
-          <PostForm
-            key={post.data?.id ?? "novo"}
-            assuntos={assuntos.data ?? []}
-            defaultValues={toFormValues(post.data, assuntoPadrao)}
-            onSubmit={onSubmit}
-            submitLabel={isEdicao ? t("save") : t("create")}
-            submitError={submitError}
-          />
+          <>
+            {acabouDeCriar && (
+              <p
+                role="status"
+                className="mb-6 rounded-lg border border-success-500 bg-success-50 p-3 text-sm text-success-700 dark:border-success-500/30 dark:bg-success-500/15 dark:text-success-400"
+              >
+                {t("form.created")}
+              </p>
+            )}
+            <PostForm
+              key={post.data?.id ?? "novo"}
+              post={post.data}
+              assuntos={assuntos.data ?? []}
+              defaultValues={toFormValues(post.data, assuntoPadrao)}
+              onSubmit={onSubmit}
+              submitLabel={isEdicao ? t("save") : t("create")}
+              submitError={submitError}
+            />
+          </>
         )}
       </div>
     </>

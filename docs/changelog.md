@@ -12,6 +12,19 @@ Formato de cada entrada:
 
 ---
 
+## 2026-10-28
+
+### Adicionado
+
+- Frontend: imagens e métricas na aba de cada variação do post (`/posts/:id`). Imagens: envio direto para o S3 (PNG, JPG, WebP até 5 MB, até 10 por variação), formato pela proporção, ampliação com o prompt das geradas pelo agente e exclusão. Métricas: resumo da última coleta (impressões, interações, engajamento), histórico, registro com validação (só com o post publicado) e exclusão de coleta.
+- Frontend: o rascunho salvo pelo agente fictício já vem com a imagem gerada em cada variação.
+- Docs: contratos de imagens e métricas em `api.md` (decisão 19).
+
+### Alterado
+
+- Frontend: depois de criar um post, a tela abre o próprio post (para adicionar imagens) em vez da lista.
+- API: no `PUT /posts/{id}`, a variação de uma rede que continua mantém o `id`; remover a variação apaga as imagens e métricas dela.
+
 ## 2026-10-27
 
 ### Adicionado

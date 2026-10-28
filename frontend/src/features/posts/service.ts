@@ -20,12 +20,18 @@ function query(projetoId: string, filtros: PostFiltros = {}) {
 }
 
 const postsHttp: PostsService = {
-  listar: (projetoId, filtros) => apiFetch<Post[]>(`/posts?${query(projetoId, filtros)}`),
+  listar: (projetoId, filtros) =>
+    apiFetch<Post[]>(`/posts?${query(projetoId, filtros)}`),
   obter: (id) => apiFetch<Post>(`/posts/${id}`),
-  criar: (input) => apiFetch<Post>("/posts", { method: "POST", body: JSON.stringify(input) }),
+  criar: (input) =>
+    apiFetch<Post>("/posts", { method: "POST", body: JSON.stringify(input) }),
   atualizar: (id, input) =>
-    apiFetch<Post>(`/posts/${id}`, { method: "PUT", body: JSON.stringify(input) }),
+    apiFetch<Post>(`/posts/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(input),
+    }),
   excluir: (id) => apiFetch<void>(`/posts/${id}`, { method: "DELETE" }),
 };
 
-export const postsService: PostsService = apiMode === "mock" ? postsMock : postsHttp;
+export const postsService: PostsService =
+  apiMode === "mock" ? postsMock : postsHttp;

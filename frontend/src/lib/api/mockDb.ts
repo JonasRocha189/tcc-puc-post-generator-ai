@@ -4,6 +4,9 @@
 import { criarRoteiro, type Roteiro } from "@/features/agente/mockRoteiro";
 import type { Assunto } from "@/features/assuntos/types";
 import type { Documento } from "@/features/documentos/types";
+import { imagemFicticia } from "@/features/imagens/ficticia";
+import type { Imagem } from "@/features/imagens/types";
+import type { Metrica } from "@/features/metricas/types";
 import type { ModoAgente } from "@/lib/dominio";
 import type { Post } from "@/features/posts/types";
 import type { Projeto } from "@/features/projetos/types";
@@ -77,7 +80,8 @@ function colecao<T extends Entidade>(key: string, seed: () => T[]) {
 }
 
 /** Simula a latência da rede. */
-export const latencia = () => new Promise((resolve) => setTimeout(resolve, 250));
+export const latencia = () =>
+  new Promise((resolve) => setTimeout(resolve, 250));
 
 export const agoraIso = () => new Date().toISOString();
 
@@ -94,7 +98,8 @@ function seedProjetos(): Projeto[] {
     {
       id: PROJ_MARCA,
       nome: "Minha marca",
-      descricao: "Conteúdo da minha consultoria de tecnologia para pequenas empresas.",
+      descricao:
+        "Conteúdo da minha consultoria de tecnologia para pequenas empresas.",
       publico_alvo: "Donos e gestores de pequenas e médias empresas",
       tom_de_voz: "Próximo, didático e sem jargão técnico",
       criado_em: agora,
@@ -131,31 +136,82 @@ function seedAssuntos(): Assunto[] {
     atualizado_em: agora,
   });
   return [
-    assunto("ass-cloud", PROJ_MARCA, "Cloud para PMEs", "Migração, custos e boas práticas de nuvem para empresas pequenas."),
-    assunto("ass-cultura", PROJ_MARCA, "Cultura da empresa", "Bastidores, time e jeito de trabalhar.", {
-      tom_de_voz: "Leve, humano e bem-humorado",
-    }),
-    assunto("ass-eventos", PROJ_MARCA, "Eventos", "Palestras e eventos de que participamos."),
-    assunto("ass-seguranca", PROJ_ACME, "Segurança da informação", "Ameaças, prevenção e conformidade.", {
-      publico_alvo: "Equipes de segurança e compliance",
-    }),
-    assunto("ass-produto", PROJ_ACME, "Novidades do produto", "Lançamentos e recursos da Acme Cloud."),
+    assunto(
+      "ass-cloud",
+      PROJ_MARCA,
+      "Cloud para PMEs",
+      "Migração, custos e boas práticas de nuvem para empresas pequenas.",
+    ),
+    assunto(
+      "ass-cultura",
+      PROJ_MARCA,
+      "Cultura da empresa",
+      "Bastidores, time e jeito de trabalhar.",
+      {
+        tom_de_voz: "Leve, humano e bem-humorado",
+      },
+    ),
+    assunto(
+      "ass-eventos",
+      PROJ_MARCA,
+      "Eventos",
+      "Palestras e eventos de que participamos.",
+    ),
+    assunto(
+      "ass-seguranca",
+      PROJ_ACME,
+      "Segurança da informação",
+      "Ameaças, prevenção e conformidade.",
+      {
+        publico_alvo: "Equipes de segurança e compliance",
+      },
+    ),
+    assunto(
+      "ass-produto",
+      PROJ_ACME,
+      "Novidades do produto",
+      "Lançamentos e recursos da Acme Cloud.",
+    ),
   ];
 }
 
 function seedPosts(): Post[] {
-  type Base = [string, string, Post["variacoes"][number]["rede"][], number, number];
+  type Base = [
+    string,
+    string,
+    Post["variacoes"][number]["rede"][],
+    number,
+    number,
+  ];
   // título, assunto, redes, dias a partir de hoje, hora
   const base: Base[] = [
     ["5 erros ao migrar para a nuvem", "ass-cloud", ["linkedin", "x"], -20, 9],
     ["Bastidores do onboarding", "ass-cultura", ["instagram"], -14, 12],
     ["Backup em nuvem sem complicação", "ass-cloud", ["linkedin"], -9, 18],
-    ["Nosso time no evento de tecnologia", "ass-eventos", ["linkedin", "instagram"], -3, 9],
+    [
+      "Nosso time no evento de tecnologia",
+      "ass-eventos",
+      ["linkedin", "instagram"],
+      -3,
+      9,
+    ],
     ["Como medir o ROI de automação", "ass-cloud", ["linkedin"], 2, 12],
     ["Um dia na vida do suporte", "ass-cultura", ["instagram"], 5, 18],
     ["Custos escondidos da nuvem", "ass-cloud", ["linkedin", "x"], 9, 9],
-    ["Checklist de segurança para o fim do ano", "ass-seguranca", ["linkedin", "instagram", "x"], -6, 9],
-    ["Phishing: 3 sinais de alerta", "ass-seguranca", ["instagram", "x"], 1, 12],
+    [
+      "Checklist de segurança para o fim do ano",
+      "ass-seguranca",
+      ["linkedin", "instagram", "x"],
+      -6,
+      9,
+    ],
+    [
+      "Phishing: 3 sinais de alerta",
+      "ass-seguranca",
+      ["instagram", "x"],
+      1,
+      12,
+    ],
     ["Autenticação em dois fatores", "ass-seguranca", ["linkedin"], 6, 9],
     ["Novo painel de auditoria", "ass-produto", ["linkedin", "x"], 12, 12],
   ];
@@ -164,7 +220,8 @@ function seedPosts(): Post[] {
     const data = new Date();
     data.setDate(data.getDate() + dias);
     data.setHours(hora, 0, 0, 0);
-    const status: Post["status"] = dias < 0 ? "publicado" : i % 2 === 0 ? "aprovado" : "rascunho";
+    const status: Post["status"] =
+      dias < 0 ? "publicado" : i % 2 === 0 ? "aprovado" : "rascunho";
     const agora = agoraIso();
     return {
       id: `post-${i + 1}`,
@@ -216,8 +273,24 @@ function seedDocumentos(): DocumentoMock[] {
   };
   return [
     doc("doc-guia", PROJ_MARCA, "guia-de-marca.pdf", "pdf", 1_240_000, 38, 20),
-    doc("doc-cases", PROJ_MARCA, "cases-de-clientes.docx", "docx", 486_000, 22, 12),
-    doc("doc-auditoria", PROJ_ACME, "auditoria-seguranca-2026.pdf", "pdf", 3_150_000, 96, 9),
+    doc(
+      "doc-cases",
+      PROJ_MARCA,
+      "cases-de-clientes.docx",
+      "docx",
+      486_000,
+      22,
+      12,
+    ),
+    doc(
+      "doc-auditoria",
+      PROJ_ACME,
+      "auditoria-seguranca-2026.pdf",
+      "pdf",
+      3_150_000,
+      96,
+      9,
+    ),
     doc("doc-faq", PROJ_ACME, "faq-produto.txt", "txt", 42_000, 7, 4),
   ];
 }
@@ -247,12 +320,125 @@ function seedExecucoes(): ExecucaoMock[] {
     };
   };
   return [
-    exec("exec-1", PROJ_ACME, "criacao", "Post sobre o checklist de segurança, com base no PDF da auditoria", { id: "ass-seguranca", nome: "Segurança da informação" }, ["auditoria-seguranca-2026.pdf"], 1, "post-8"),
-    exec("exec-2", PROJ_ACME, "ideacao", "Temas para a próxima semana sobre segurança em nuvem", null, [], 6),
-    exec("exec-3", PROJ_ACME, "ideacao", "O que está funcionando melhor no LinkedIn? #erro", null, [], 30),
-    exec("exec-4", PROJ_MARCA, "criacao", "Carrossel do Instagram sobre onboarding #limite", { id: "ass-cultura", nome: "Cultura da empresa" }, [], 26),
-    exec("exec-5", PROJ_MARCA, "ideacao", "Ideias de posts para pequenas empresas que querem migrar para a nuvem", null, [], 50),
+    exec(
+      "exec-1",
+      PROJ_ACME,
+      "criacao",
+      "Post sobre o checklist de segurança, com base no PDF da auditoria",
+      { id: "ass-seguranca", nome: "Segurança da informação" },
+      ["auditoria-seguranca-2026.pdf"],
+      1,
+      "post-8",
+    ),
+    exec(
+      "exec-2",
+      PROJ_ACME,
+      "ideacao",
+      "Temas para a próxima semana sobre segurança em nuvem",
+      null,
+      [],
+      6,
+    ),
+    exec(
+      "exec-3",
+      PROJ_ACME,
+      "ideacao",
+      "O que está funcionando melhor no LinkedIn? #erro",
+      null,
+      [],
+      30,
+    ),
+    exec(
+      "exec-4",
+      PROJ_MARCA,
+      "criacao",
+      "Carrossel do Instagram sobre onboarding #limite",
+      { id: "ass-cultura", nome: "Cultura da empresa" },
+      [],
+      26,
+    ),
+    exec(
+      "exec-5",
+      PROJ_MARCA,
+      "ideacao",
+      "Ideias de posts para pequenas empresas que querem migrar para a nuvem",
+      null,
+      [],
+      50,
+    ),
   ];
+}
+
+function seedImagens(): Imagem[] {
+  const criado_em = agoraIso();
+  const gerada = (
+    variacao_id: string,
+    formato: Imagem["formato"],
+    prompt: string,
+  ): Imagem => ({
+    id: `img-${variacao_id}`,
+    variacao_id,
+    formato,
+    prompt,
+    url: imagemFicticia(variacao_id, formato),
+    criado_em,
+  });
+  return [
+    gerada(
+      "var-1-linkedin",
+      "1:1",
+      "ilustração minimalista de servidores migrando para a nuvem, sem texto",
+    ),
+    gerada(
+      "var-4-instagram",
+      "4:5",
+      "equipe em um evento de tecnologia, estilo ilustração plana, sem texto",
+    ),
+    gerada(
+      "var-8-linkedin",
+      "1:1",
+      "ilustração sobre checklist de segurança, sem texto",
+    ),
+    gerada(
+      "var-8-instagram",
+      "4:5",
+      "ilustração sobre checklist de segurança, sem texto",
+    ),
+  ];
+}
+
+/** Métricas dos posts publicados: um registro 1 dia e outro 7 dias após publicar. */
+function seedMetricas(): Metrica[] {
+  const fator = { linkedin: 1, instagram: 1.6, x: 0.7 } as const;
+  return seedPosts()
+    .filter((p) => p.status === "publicado" && p.data_prevista)
+    .flatMap((post, i) =>
+      post.variacoes.flatMap((v) => {
+        const publicado = new Date(post.data_prevista!);
+        const base = (900 + ((i * 7919) % 9) * 260) * fator[v.rede];
+        return [1, 7]
+          .map((dias) => ({
+            dias,
+            coleta: new Date(publicado.getTime() + dias * 86_400_000),
+          }))
+          .filter(({ coleta }) => coleta.getTime() <= Date.now())
+          .map(({ dias, coleta }): Metrica => {
+            const impressoes = Math.round(base * (dias === 1 ? 0.6 : 1));
+            const taxa = 0.02 + ((i * 31) % 5) / 100;
+            return {
+              id: `met-${v.id}-${dias}`,
+              variacao_id: v.id,
+              publicado_em: publicado.toISOString(),
+              impressoes,
+              curtidas: Math.round(impressoes * taxa * 0.6),
+              comentarios: Math.round(impressoes * taxa * 0.12),
+              compartilhamentos: Math.round(impressoes * taxa * 0.08),
+              cliques: Math.round(impressoes * taxa * 0.2),
+              coletado_em: coleta.toISOString(),
+            };
+          });
+      }),
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -261,6 +447,35 @@ export const mockDb = {
   projetos: colecao<Projeto>("postpilot:mock:projetos", seedProjetos),
   assuntos: colecao<Assunto>("postpilot:mock:assuntos", seedAssuntos),
   posts: colecao<Post>("postpilot:mock:posts", seedPosts),
-  documentos: colecao<DocumentoMock>("postpilot:mock:documentos", seedDocumentos),
+  documentos: colecao<DocumentoMock>(
+    "postpilot:mock:documentos",
+    seedDocumentos,
+  ),
   execucoes: colecao<ExecucaoMock>("postpilot:mock:execucoes", seedExecucoes),
+  imagens: colecao<Imagem>("postpilot:mock:imagens", seedImagens),
+  metricas: colecao<Metrica>("postpilot:mock:metricas", seedMetricas),
 };
+
+/** Encontra a variação e o post dela, ou responde 404 como a API. */
+export function variacaoDoMock(variacaoId: string) {
+  for (const post of mockDb.posts.todos()) {
+    const variacao = post.variacoes.find((v) => v.id === variacaoId);
+    if (variacao) return { post, variacao };
+  }
+  throw new ApiError(404, "Variação não encontrada");
+}
+
+/** Remove imagens e métricas das variações excluídas (cascata do banco). */
+export function removerDependentesDasVariacoes(variacaoIds: string[]) {
+  const ids = new Set(variacaoIds);
+  for (const img of mockDb.imagens
+    .todos()
+    .filter((i) => ids.has(i.variacao_id))) {
+    mockDb.imagens.remover(img.id);
+  }
+  for (const m of mockDb.metricas
+    .todos()
+    .filter((m) => ids.has(m.variacao_id))) {
+    mockDb.metricas.remover(m.id);
+  }
+}

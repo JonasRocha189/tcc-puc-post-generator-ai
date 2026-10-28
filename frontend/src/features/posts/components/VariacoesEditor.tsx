@@ -1,4 +1,8 @@
+import ConfirmarExclusaoModal from "@/components/common/ConfirmarExclusaoModal";
+import Portal from "@/components/common/Portal";
 import { FormInput, FormTextArea } from "@/components/form/FormField";
+import { useImagens } from "@/features/imagens/api";
+import { useMetricas } from "@/features/metricas/api";
 import { PlusIcon, TrashBinIcon } from "@/icons";
 import { REDE_LABEL, type Rede } from "@/lib/dominio";
 import { useFormat } from "@/lib/format";
@@ -6,8 +10,15 @@ import { cn } from "@/utils";
 import { useState } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { contarCaracteres, LIMITE_CARACTERES, parseHashtags, REDES } from "../redes";
+import {
+  contarCaracteres,
+  LIMITE_CARACTERES,
+  parseHashtags,
+  REDES,
+} from "../redes";
 import type { PostFormValues } from "../schema";
+import type { Post } from "../types";
+import MidiaEMetricas from "./MidiaEMetricas";
 
 /** Contador "123 / 280" da variação, em vermelho acima do limite. */
 function Contador({ index, rede }: { index: number; rede: Rede }) {
@@ -16,7 +27,10 @@ function Contador({ index, rede }: { index: number; rede: Rede }) {
   const variacao = useWatch<PostFormValues, `variacoes.${number}`>({
     name: `variacoes.${index}`,
   });
-  const total = contarCaracteres(variacao?.texto ?? "", parseHashtags(variacao?.hashtags ?? ""));
+  const total = contarCaracteres(
+    variacao?.texto ?? "",
+    parseHashtags(variacao?.hashtags ?? ""),
+  );
   const limite = LIMITE_CARACTERES[rede];
   const excedeu = total > limite;
 
@@ -28,7 +42,10 @@ function Contador({ index, rede }: { index: number; rede: Rede }) {
         excedeu ? "text-error-500" : "text-gray-500 dark:text-gray-400",
       )}
     >
-      {t("posts.form.counter", { count: fmt.number(total), limit: fmt.number(limite) })}
+      {t("posts.form.counter", {
+        count: fmt.number(total),
+        limit: fmt.number(limite),
+      })}
     </p>
   );
 }
@@ -37,14 +54,17 @@ function Contador({ index, rede }: { index: number; rede: Rede }) {
  * Detalhe do mestre-detalhe: uma aba por rede, com a variação do post
  * para aquela rede (no máximo uma por rede).
  */
-export default function VariacoesEditor() {
+export default function VariacoesEditor({ post }: { post?: Post }) {
   const { t } = useTranslation("app");
   const {
     control,
     register,
     formState: { errors, submitCount },
   } = useFormContext<PostFormValues>();
-  const { fields, append, remove } = useFieldArray({ control, name: "variacoes" });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "variacoes",
+  });
   const [ativa, setAtiva] = useState<Rede>(() => fields[0]?.rede ?? "linkedin");
 
   const indice = (rede: Rede) => fields.findIndex((f) => f.rede === rede);
@@ -64,8 +84,22 @@ export default function VariacoesEditor() {
 
   const erro = (message: string | undefined, rede: Rede) =>
     message
-      ? t(message, { limit: LIMITE_CARACTERES[rede], network: REDE_LABEL[rede] })
+      ? t(message, {
+          limit: LIMITE_CARACTERES[rede],
+          network: REDE_LABEL[rede],
+        })
       : undefined;
+
+  // Remover uma variação salva com imagens ou métricas apaga tudo ao salvar: pede confirmação
+  const variacaoSalvaId = post?.variacoes.find((v) => v.rede === ativa)?.id;
+  const imagensSalvas = useImagens(variacaoSalvaId);
+  const metricasSalvas = useMetricas(variacaoSalvaId);
+  const [confirmarRemocao, setConfirmarRemocao] = useState(false);
+  const removerAtiva = () => {
+    if (imagensSalvas.data?.length || metricasSalvas.data?.length)
+      setConfirmarRemocao(true);
+    else remove(index);
+  };
 
   const adicionar = () => {
     // Mantém as variações na ordem das redes
@@ -104,7 +138,11 @@ export default function VariacoesEditor() {
                 aria-hidden
                 className={cn(
                   "size-2 rounded-full",
-                  temErro ? "bg-error-500" : i >= 0 ? "bg-success-500" : "bg-gray-300 dark:bg-gray-700",
+                  temErro
+                    ? "bg-error-500"
+                    : i >= 0
+                      ? "bg-success-500"
+                      : "bg-gray-300 dark:bg-gray-700",
                 )}
               />
               <span className="sr-only">
@@ -121,7 +159,9 @@ export default function VariacoesEditor() {
 
       {errors.variacoes?.root?.message || errors.variacoes?.message ? (
         <p role="alert" className="mt-3 text-sm text-error-500">
-          {t(errors.variacoes?.root?.message ?? errors.variacoes?.message ?? "")}
+          {t(
+            errors.variacoes?.root?.message ?? errors.variacoes?.message ?? "",
+          )}
         </p>
       ) : null}
 
@@ -152,7 +192,9 @@ export default function VariacoesEditor() {
               <FormTextArea
                 id={`variacao-${ativa}-texto`}
                 label={t("posts.form.text")}
-                placeholder={t("posts.form.textPlaceholder", { network: REDE_LABEL[ativa] })}
+                placeholder={t("posts.form.textPlaceholder", {
+                  network: REDE_LABEL[ativa],
+                })}
                 rows={8}
                 required
                 error={erro(variacaoErros(index)?.texto?.message, ativa)}
@@ -173,16 +215,37 @@ export default function VariacoesEditor() {
             <div className="flex justify-end">
               <button
                 type="button"
-                onClick={() => remove(index)}
+                onClick={removerAtiva}
                 className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-500 hover:bg-error-50 hover:text-error-600 dark:text-gray-400 dark:hover:bg-error-500/10 dark:hover:text-error-400"
               >
                 <TrashBinIcon className="size-4" />
-                {t("posts.form.removeVariation", { network: REDE_LABEL[ativa] })}
+                {t("posts.form.removeVariation", {
+                  network: REDE_LABEL[ativa],
+                })}
               </button>
+            </div>
+            <div className="border-t border-gray-200 pt-5 dark:border-gray-800">
+              <MidiaEMetricas post={post} rede={ativa} />
             </div>
           </div>
         )}
       </div>
+
+      {/* Fora do <form> do post (ver Portal) */}
+      <Portal>
+        <ConfirmarExclusaoModal
+          isOpen={confirmarRemocao}
+          title={t("posts.form.removeTitle", { network: REDE_LABEL[ativa] })}
+          message={t("posts.form.removeMessage", {
+            images: imagensSalvas.data?.length ?? 0,
+            metrics: metricasSalvas.data?.length ?? 0,
+          })}
+          onConfirm={async () => {
+            if (index >= 0) remove(index);
+          }}
+          onClose={() => setConfirmarRemocao(false)}
+        />
+      </Portal>
     </div>
   );
 }

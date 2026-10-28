@@ -373,7 +373,14 @@
         "tooLongForNetwork": "Passou do limite de {limit} caracteres do {network} (contando as hashtags).",
         "tooManyHashtags": "Use no máximo 30 hashtags.",
         "variationRequired": "Adicione a variação de pelo menos uma rede."
-      }
+      },
+      "saveFirst": "Salve o post para adicionar imagens e métricas à variação do {network}.",
+      "savedImmediately": "Imagens e métricas são salvas na hora, sem precisar clicar em \"Salvar alterações\".",
+      "images": "Imagens",
+      "metrics": "Métricas",
+      "removeTitle": "Remover a variação do {network}?",
+      "removeMessage": "Ela tem {images} imagem(ns) e {metrics} registro(s) de métricas, que serão excluídos quando você salvar o post.",
+      "created": "Post criado. Agora você pode adicionar imagens a cada variação."
     }
   },
   "documents": {
@@ -491,6 +498,66 @@
       "iterations": "Iterações",
       "iterationsValue": "{n} de {max}",
       "back": "Voltar ao histórico"
+    }
+  },
+  "images": {
+    "add": "Adicionar imagem",
+    "drop": "Solte para enviar",
+    "hint": "PNG, JPG ou WebP até {max} MB",
+    "inputLabel": "Enviar imagens",
+    "tooLarge": "Imagem maior que {max} MB.",
+    "invalidType": "Formato não aceito. Envie PNG, JPG ou WebP.",
+    "tooMany": "Cada variação aceita no máximo {max} imagens.",
+    "failed": "Não foi possível enviar a imagem. Tente novamente.",
+    "progress": "Enviando {name}",
+    "dismiss": "Dispensar",
+    "empty": "Nenhuma imagem ainda. Envie uma ou peça ao agente para gerar.",
+    "loadError": "Não foi possível carregar as imagens.",
+    "open": "Ampliar imagem {n}",
+    "deleteLabel": "Excluir imagem {n}",
+    "generated": "Gerada pelo agente",
+    "uploaded": "Enviada por você",
+    "prompt": "Prompt",
+    "deleteTitle": "Excluir esta imagem?",
+    "deleteMessage": "A imagem será removida da variação e do armazenamento. Esta ação não pode ser desfeita."
+  },
+  "metrics": {
+    "fields": {
+      "impressoes": "Impressões",
+      "curtidas": "Curtidas",
+      "comentarios": "Comentários",
+      "compartilhamentos": "Compartilhamentos",
+      "cliques": "Cliques"
+    },
+    "interactions": "Interações",
+    "engagement": "Engajamento",
+    "latest": "Última coleta em {collected} · publicado em {published}",
+    "history": "Histórico de coletas",
+    "collectedAt": "Coletado em",
+    "collectedAtHint": "Quando você consultou os números na rede.",
+    "publishedAt": "Publicado em",
+    "actions": "Ações",
+    "deleteLabel": "Excluir a coleta de {date}",
+    "empty": "Nenhuma métrica registrada ainda.",
+    "notPublished": "Para registrar métricas, marque o post como publicado e salve.",
+    "register": "Registrar métricas",
+    "registerTitle": "Registrar métricas",
+    "registerHint": "Copie os números que a rede mostra para esta publicação.",
+    "totalsHint": "Informe os totais até o momento da coleta (não só o que mudou desde a anterior).",
+    "save": "Registrar",
+    "saveError": "Não foi possível registrar as métricas. Tente novamente.",
+    "loadError": "Não foi possível carregar as métricas.",
+    "deleteTitle": "Excluir esta coleta?",
+    "deleteMessage": "Os números desta coleta deixarão de contar no relatório. Esta ação não pode ser desfeita.",
+    "errors": {
+      "number": "Informe um número.",
+      "integer": "Use um número inteiro.",
+      "negative": "Não pode ser negativo.",
+      "tooBig": "Número grande demais.",
+      "publishedRequired": "Informe quando foi publicado.",
+      "collectedRequired": "Informe quando os números foram coletados.",
+      "future": "Não pode ser no futuro.",
+      "beforePublished": "A coleta não pode ser antes da publicação."
     }
   }
 }

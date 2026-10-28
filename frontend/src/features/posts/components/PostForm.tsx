@@ -1,4 +1,8 @@
-import { alertErrorClass, cardClass, secondaryLinkClass } from "@/components/common/styles";
+import {
+  alertErrorClass,
+  cardClass,
+  secondaryLinkClass,
+} from "@/components/common/styles";
 import { FormInput, FormSelect } from "@/components/form/FormField";
 import Button from "@/components/ui/button/Button";
 import type { Assunto } from "@/features/assuntos/types";
@@ -8,6 +12,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { postFormSchema, type PostFormValues } from "../schema";
+import type { Post } from "../types";
 import VariacoesEditor from "./VariacoesEditor";
 
 const STATUS: StatusPost[] = ["rascunho", "aprovado", "publicado"];
@@ -19,7 +24,10 @@ export default function PostForm({
   onSubmit,
   submitLabel,
   submitError,
+  post,
 }: {
+  /** Post salvo (na edição): imagens e métricas dependem das variações salvas */
+  post?: Post;
   assuntos: Assunto[];
   defaultValues: PostFormValues;
   onSubmit: (values: PostFormValues) => Promise<unknown>;
@@ -37,7 +45,8 @@ export default function PostForm({
     formState: { errors, isSubmitting },
   } = form;
 
-  const erro = (message?: string) => (message ? t(message, { max: 200 }) : undefined);
+  const erro = (message?: string) =>
+    message ? t(message, { max: 200 }) : undefined;
 
   return (
     <FormProvider {...form}>
@@ -104,7 +113,7 @@ export default function PostForm({
           <p className="mt-1 mb-4 text-sm text-gray-500 dark:text-gray-400">
             {t("posts.form.variationsHint")}
           </p>
-          <VariacoesEditor />
+          <VariacoesEditor post={post} />
         </section>
 
         {submitError && (
