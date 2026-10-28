@@ -40,14 +40,14 @@
 | POST | `/variacoes/{id}/metricas` | Registra métricas |
 | GET | `/relatorio/desempenho` 🅿 | Agregados do projeto por assunto, rede, dia, horário e imagem |
 | **Documentos** | | |
-| GET | `/documentos` 🅿 | Lista os documentos do projeto, com status de processamento |
-| POST | `/documentos/upload-url` | Valida tipo e tamanho e devolve URL pré-assinada (com `projeto_id`) |
-| POST | `/documentos/{id}/processar` | Avisa que o upload terminou e dispara o processamento |
+| GET | `/documentos` 🅿 | Lista os documentos do projeto (mais recentes primeiro), com status de processamento |
+| POST | `/documentos/upload-url` | Corpo `{projeto_id, nome, tipo, tamanho_bytes}`. Valida tipo (`pdf`, `docx`, `txt`) e tamanho (até 10 MB), cria o Documento como `pendente` e responde `{documento, upload_url}`. A URL pré-assinada exige o `Content-Type` do tipo |
+| POST | `/documentos/{id}/processar` | Avisa que o upload terminou: muda para `processando` e processa em segundo plano (extração, chunking, embeddings). Responde o Documento |
 | DELETE | `/documentos/{id}` | Remove o documento, o objeto S3 e os chunks |
 | **Agente** | | |
-| POST | `/agente/execucoes` | Executa o agente no projeto (`projeto_id`, `modo`: `ideacao` ou `criacao`) |
-| GET | `/agente/execucoes` 🅿 | Histórico de execuções do projeto |
-| GET | `/agente/execucoes/{id}` | Execução com seus passos |
+| POST | `/agente/execucoes` | Corpo `{projeto_id, modo, pedido}`. Cria a execução e **responde `202` na hora** com `status: "executando"`; o loop roda em segundo plano |
+| GET | `/agente/execucoes` 🅿 | Histórico de execuções do projeto (mais recentes primeiro) |
+| GET | `/agente/execucoes/{id}` | Execução com os passos gravados até o momento. O frontend consulta a cada ~0,7 s enquanto `status = "executando"` para mostrar os passos ao vivo |
 
 ## Corpo de `POST /posts` e `PUT /posts/{id}`
 
@@ -66,3 +66,36 @@
 
 - No máximo uma variação por rede (`linkedin`, `instagram`, `x`) e pelo menos uma.
 - `hashtags` sem o `#`. O backend calcula `contagem_caracteres` do texto final (texto, linha em branco e hashtags com `#`) e responde `422` se passar do limite da rede: LinkedIn 3000, Instagram 2200, X 280. O frontend usa a mesma regra (`features/posts/redes.ts`).
+
+## Resposta de `GET /agente/execucoes/{id}`
+
+```json
+{
+  "id": "uuid",
+  "projeto_id": "uuid",
+  "modo": "criacao",
+  "pedido": "Post sobre o checklist de segurança",
+  "status": "concluida",
+  "resposta": "Pronto! Escrevi o post…",
+  "post_id": "uuid",
+  "iteracoes": 7,
+  "iniciada_em": "2026-10-27T22:51:00Z",
+  "finalizada_em": "2026-10-27T22:51:05Z",
+  "passos": [
+    {
+      "id": "uuid",
+      "ordem": 1,
+      "tool": "buscar_documentos",
+      "argumentos": { "query": "checklist de segurança" },
+      "resultado_resumo": "4 trechos relevantes de auditoria.pdf",
+      "duracao_ms": 380,
+      "erro": null
+    }
+  ]
+}
+```
+
+- `status`: `executando`, `concluida`, `erro` (uma tool falhou e o agente parou) ou `limite_atingido` (8 iterações sem resposta final).
+- `resultado_resumo` é um texto curto para a tela; o resultado completo da tool fica só no banco e nos logs.
+- `iteracoes` conta as voltas do loop: várias tools pedidas pelo LLM na mesma resposta contam como uma.
+- `post_id` é preenchido quando o agente salva um rascunho (modo criação).

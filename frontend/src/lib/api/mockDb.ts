@@ -1,11 +1,34 @@
 // BANCO FICTÍCIO para `npm run dev` sem backend (ver lib/api/http.ts).
 // Cada coleção fica no localStorage; os services `mock` de cada feature
 // usam estas coleções e imitam as regras da API real (404, 409...).
+import { criarRoteiro, type Roteiro } from "@/features/agente/mockRoteiro";
 import type { Assunto } from "@/features/assuntos/types";
+import type { Documento } from "@/features/documentos/types";
+import type { ModoAgente } from "@/lib/dominio";
 import type { Post } from "@/features/posts/types";
 import type { Projeto } from "@/features/projetos/types";
 import { contarCaracteres } from "@/features/posts/redes";
 import { ApiError } from "./http";
+
+/** Documento no banco fictício: guarda quando o processamento começou. */
+export type DocumentoMock = Documento & {
+  processamento_iniciado_em: string | null;
+};
+
+/**
+ * Execução no banco fictício: guarda o roteiro inteiro; os passos vão
+ * "aparecendo" conforme o tempo passa (ver features/agente/mock.ts).
+ */
+export type ExecucaoMock = {
+  id: string;
+  projeto_id: string;
+  modo: ModoAgente;
+  pedido: string;
+  iniciada_em: string;
+  roteiro: Roteiro;
+  post_id: string | null;
+  finalizada: boolean;
+};
 
 type Entidade = { id: string };
 
@@ -166,10 +189,78 @@ function seedPosts(): Post[] {
   });
 }
 
+function seedDocumentos(): DocumentoMock[] {
+  const doc = (
+    id: string,
+    projeto_id: string,
+    nome: string,
+    tipo: Documento["tipo"],
+    tamanho_bytes: number,
+    total_chunks: number,
+    diasAtras: number,
+  ): DocumentoMock => {
+    const data = new Date(Date.now() - diasAtras * 86_400_000).toISOString();
+    return {
+      id,
+      projeto_id,
+      nome,
+      tipo,
+      tamanho_bytes,
+      status: "pronto",
+      mensagem_erro: null,
+      total_chunks,
+      criado_em: data,
+      atualizado_em: data,
+      processamento_iniciado_em: data,
+    };
+  };
+  return [
+    doc("doc-guia", PROJ_MARCA, "guia-de-marca.pdf", "pdf", 1_240_000, 38, 20),
+    doc("doc-cases", PROJ_MARCA, "cases-de-clientes.docx", "docx", 486_000, 22, 12),
+    doc("doc-auditoria", PROJ_ACME, "auditoria-seguranca-2026.pdf", "pdf", 3_150_000, 96, 9),
+    doc("doc-faq", PROJ_ACME, "faq-produto.txt", "txt", 42_000, 7, 4),
+  ];
+}
+
+function seedExecucoes(): ExecucaoMock[] {
+  const projetos = seedProjetos();
+  const exec = (
+    id: string,
+    projetoId: string,
+    modo: ModoAgente,
+    pedido: string,
+    assunto: { id: string; nome: string } | null,
+    documentos: string[],
+    horasAtras: number,
+    post_id: string | null = null,
+  ): ExecucaoMock => {
+    const projeto = projetos.find((p) => p.id === projetoId)!;
+    return {
+      id,
+      projeto_id: projetoId,
+      modo,
+      pedido,
+      iniciada_em: new Date(Date.now() - horasAtras * 3_600_000).toISOString(),
+      roteiro: criarRoteiro({ modo, pedido, projeto, assunto, documentos }),
+      post_id,
+      finalizada: true,
+    };
+  };
+  return [
+    exec("exec-1", PROJ_ACME, "criacao", "Post sobre o checklist de segurança, com base no PDF da auditoria", { id: "ass-seguranca", nome: "Segurança da informação" }, ["auditoria-seguranca-2026.pdf"], 1, "post-8"),
+    exec("exec-2", PROJ_ACME, "ideacao", "Temas para a próxima semana sobre segurança em nuvem", null, [], 6),
+    exec("exec-3", PROJ_ACME, "ideacao", "O que está funcionando melhor no LinkedIn? #erro", null, [], 30),
+    exec("exec-4", PROJ_MARCA, "criacao", "Carrossel do Instagram sobre onboarding #limite", { id: "ass-cultura", nome: "Cultura da empresa" }, [], 26),
+    exec("exec-5", PROJ_MARCA, "ideacao", "Ideias de posts para pequenas empresas que querem migrar para a nuvem", null, [], 50),
+  ];
+}
+
 // ---------------------------------------------------------------------------
 
 export const mockDb = {
   projetos: colecao<Projeto>("postpilot:mock:projetos", seedProjetos),
   assuntos: colecao<Assunto>("postpilot:mock:assuntos", seedAssuntos),
   posts: colecao<Post>("postpilot:mock:posts", seedPosts),
+  documentos: colecao<DocumentoMock>("postpilot:mock:documentos", seedDocumentos),
+  execucoes: colecao<ExecucaoMock>("postpilot:mock:execucoes", seedExecucoes),
 };
