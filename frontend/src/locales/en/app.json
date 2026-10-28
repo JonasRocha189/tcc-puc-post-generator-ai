@@ -8,11 +8,63 @@
   "nav": {
     "menu": "Menu",
     "dashboard": "Dashboard",
+    "projects": "Projects",
     "calendar": "Calendar",
     "profile": "Profile",
     "templateGroup": "Template (reference)",
-    "search": "Search...",
-    "toggleSidebar": "Toggle menu"
+    "toggleSidebar": "Toggle menu",
+    "moreOptions": "More options",
+    "posts": "Posts",
+    "subjects": "Subjects"
+  },
+  "projects": {
+    "title": "Projects",
+    "subtitle": "Your brand and your clients. Subjects, documents and posts live inside each project.",
+    "current": "Current project",
+    "currentBadge": "Current",
+    "inUse": "Project in use",
+    "use": "Use this project",
+    "selectorLabel": "Current project: {name}. Switch project",
+    "new": "New project",
+    "newTitle": "New project",
+    "editTitle": "Edit project",
+    "edit": "Edit",
+    "editLabel": "Edit {name}",
+    "deleteLabel": "Delete {name}",
+    "manage": "Manage projects",
+    "createFirst": "Create your first project",
+    "loadError": "Could not load your projects. Please try again.",
+    "empty": {
+      "title": "You don't have any projects yet",
+      "message": "Create a project for your brand or for each client. Then add subjects, upload documents and generate posts inside it."
+    },
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "e.g. My brand or Acme Cloud",
+      "description": "Description",
+      "descriptionPlaceholder": "What this project or client is about",
+      "voiceSection": "Brand voice",
+      "voiceHint": "Applies to every subject in the project. Each subject can set its own if needed.",
+      "audience": "Target audience",
+      "audiencePlaceholder": "e.g. IT managers at mid-sized companies",
+      "tone": "Tone of voice",
+      "tonePlaceholder": "e.g. Professional, friendly and jargon-free",
+      "create": "Create project",
+      "save": "Save changes",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "saveError": "Could not save the project. Please try again.",
+      "errors": {
+        "nameRequired": "Enter the project name.",
+        "tooLong": "Use at most {max} characters."
+      }
+    },
+    "delete": {
+      "title": "Delete \"{name}\"?",
+      "message": "This can't be undone. Only projects without subjects and documents can be deleted.",
+      "confirm": "Delete",
+      "hasContent": "This project still has subjects or documents. Delete them before deleting the project."
+    }
   },
   "language": {
     "label": "Language",
@@ -181,8 +233,137 @@
       "subject": "Subject",
       "networks": "Networks",
       "status": "Status",
-      "openPost": "Open post",
-      "postPageSoon": "The post editing page hasn't been built yet."
+      "openPost": "Open post"
+    }
+  },
+  "form": {
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "errors": {
+      "tooLong": "Use at most {max} characters."
+    }
+  },
+  "deleteDialog": {
+    "confirm": "Delete",
+    "deleting": "Deleting...",
+    "cancel": "Cancel",
+    "failed": "Could not delete. Please try again."
+  },
+  "subjects": {
+    "title": "Subjects",
+    "subtitle": "Topics the {project} project posts about.",
+    "new": "New subject",
+    "newTitle": "New subject",
+    "editTitle": "Edit subject",
+    "edit": "Edit",
+    "editLabel": "Edit {name}",
+    "deleteLabel": "Delete {name}",
+    "create": "Create subject",
+    "save": "Save changes",
+    "saveError": "Could not save the subject. Please try again.",
+    "loadError": "Could not load subjects. Please try again.",
+    "fromProject": "From project",
+    "empty": {
+      "title": "No subjects yet",
+      "message": "Subjects organize the project's posts, like \"Product launches\" or \"Security tips\"."
+    },
+    "columns": {
+      "name": "Subject",
+      "audience": "Target audience",
+      "tone": "Tone of voice",
+      "actions": "Actions"
+    },
+    "form": {
+      "name": "Name",
+      "namePlaceholder": "e.g. Security tips",
+      "description": "Description",
+      "descriptionPlaceholder": "What belongs in this subject",
+      "voiceSection": "Brand voice (optional)",
+      "voiceHint": "Leave blank to use the {project} project's voice.",
+      "inherits": "If blank, uses the project's: \"{value}\"",
+      "inheritsNothing": "The project doesn't set this field either.",
+      "errors": {
+        "nameRequired": "Enter the subject name."
+      }
+    },
+    "delete": {
+      "title": "Delete \"{name}\"?",
+      "message": "This can't be undone. Only subjects without posts can be deleted.",
+      "confirm": "Delete",
+      "hasPosts": "This subject still has posts. Delete or move them before deleting the subject."
+    }
+  },
+  "posts": {
+    "title": "Posts",
+    "subtitle": "Posts for the {project} project, with one variation per network.",
+    "new": "New post",
+    "newTitle": "New post",
+    "editTitle": "Edit post",
+    "edit": "Edit",
+    "editLabel": "Edit {name}",
+    "deleteLabel": "Delete {name}",
+    "create": "Create post",
+    "save": "Save changes",
+    "saveError": "Could not save the post. Please try again.",
+    "loadError": "Could not load posts. Please try again.",
+    "noDate": "No date",
+    "empty": "No posts yet. Create the first one or ask the agent.",
+    "emptyFiltered": "No posts match these filters.",
+    "needSubject": {
+      "title": "Create a subject first",
+      "message": "Every post belongs to one of the project's subjects. Add a subject to get started."
+    },
+    "filters": {
+      "status": "Status",
+      "subject": "Subject",
+      "all": "All",
+      "clear": "Clear filters"
+    },
+    "columns": {
+      "title": "Title",
+      "subject": "Subject",
+      "networks": "Networks",
+      "date": "Planned date",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "delete": {
+      "title": "Delete \"{name}\"?",
+      "message": "The post and all its variations will be deleted. This can't be undone.",
+      "confirm": "Delete"
+    },
+    "form": {
+      "postSection": "Post",
+      "title": "Title",
+      "titlePlaceholder": "e.g. 5 mistakes when moving to the cloud",
+      "titleHint": "For internal use, to find the post. It is not published.",
+      "subject": "Subject",
+      "subjectPlaceholder": "Select a subject",
+      "status": "Status",
+      "statusHint": "The agent always creates drafts; approving and publishing is up to you.",
+      "scheduledFor": "Planned date",
+      "variations": "Variations by network",
+      "variationsHint": "One text per network, following each network's format and character limit.",
+      "tabFilled": "(has variation)",
+      "tabEmpty": "(no variation)",
+      "tabError": "(has errors)",
+      "noVariation": "This post has no {network} variation yet.",
+      "addVariation": "Add {network} variation",
+      "removeVariation": "Remove {network} variation",
+      "text": "Text",
+      "textPlaceholder": "Post text for {network}",
+      "hashtags": "Hashtags",
+      "hashtagsPlaceholder": "#cloud #security",
+      "hashtagsHint": "Separate with spaces or commas. The # is optional.",
+      "counter": "{count} / {limit} characters (including hashtags)",
+      "errors": {
+        "titleRequired": "Enter the post title.",
+        "subjectRequired": "Select the subject.",
+        "textRequired": "Write the text for this variation.",
+        "tooLongForNetwork": "Over {network}'s {limit}-character limit (including hashtags).",
+        "tooManyHashtags": "Use at most 30 hashtags.",
+        "variationRequired": "Add a variation for at least one network."
+      }
     }
   }
 }

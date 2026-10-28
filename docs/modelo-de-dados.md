@@ -4,19 +4,31 @@
 
 Todas as entidades do usuário têm `usuario_id` (o `sub` do Auth0), `criado_em` e `atualizado_em`. Todas as consultas filtram por `usuario_id`.
 
+O **Projeto** (a marca do próprio usuário ou um cliente) é o topo da hierarquia: assuntos, documentos e execuções do agente pertencem a um projeto, e os posts pertencem a ele através do assunto. Assim, o conteúdo e os documentos de um cliente nunca se misturam com os de outro.
+
 ## Diagrama de classes
 
 ```mermaid
 classDiagram
     direction LR
 
-    class Assunto {
+    class Projeto {
         +UUID id
         +str usuario_id
         +str nome
         +str descricao
         +str publico_alvo
         +str tom_de_voz
+    }
+
+    class Assunto {
+        +UUID id
+        +str usuario_id
+        +UUID projeto_id
+        +str nome
+        +str descricao
+        +str? publico_alvo
+        +str? tom_de_voz
     }
 
     class Post {
@@ -60,6 +72,7 @@ classDiagram
     class Documento {
         +UUID id
         +str usuario_id
+        +UUID projeto_id
         +str nome
         +str chave_s3
         +str tipo
@@ -77,6 +90,7 @@ classDiagram
     class ExecucaoAgente {
         +UUID id
         +str usuario_id
+        +UUID projeto_id
         +ModoAgente modo
         +str pedido
         +str resposta
@@ -123,6 +137,9 @@ classDiagram
         criacao
     }
 
+    Projeto "1" --> "*" Assunto
+    Projeto "1" --> "*" Documento
+    Projeto "1" --> "*" ExecucaoAgente
     Assunto "1" --> "*" Post
     Post "1" *-- "*" VariacaoPost : mestre-detalhe
     VariacaoPost "1" *-- "*" Imagem
@@ -135,11 +152,12 @@ classDiagram
 
 | Entidade | Regra |
 | --- | --- |
-| Assunto | CRUD completo (requisito do TCC). |
-| Post | CRUD completo. O agente só cria com status `rascunho`; aprovar e publicar é ação do usuário. |
-| VariacaoPost | Editada na mesma tela do Post (mestre-detalhe, requisito do TCC). No máximo uma variação por rede em cada post. |
-| Imagem | Guarda só a chave S3 (ex.: `usuarios/{id}/posts/{id}/{uuid}.png`), nunca a URL. |
+| Projeto | CRUD completo. Define o público-alvo e o tom de voz padrão. Só pode ser excluído quando não tem assuntos nem documentos (a API responde `409` caso contrário), para evitar apagar conteúdo e arquivos no S3 por engano. |
+| Assunto | CRUD completo (requisito do TCC). Pertence a um projeto. `publico_alvo` e `tom_de_voz` são opcionais: quando vazios, valem os do projeto. Só pode ser excluído sem posts (`409` caso contrário). |
+| Post | CRUD completo. O agente só cria com status `rascunho`; aprovar e publicar é ação do usuário. Não tem `projeto_id`: o projeto vem do assunto (`post → assunto → projeto`), evitando dados duplicados que podem ficar inconsistentes. |
+| VariacaoPost | Editada na mesma tela do Post (mestre-detalhe, requisito do TCC). No máximo uma variação por rede em cada post, e pelo menos uma. `contagem_caracteres` conta texto + hashtags e não pode passar do limite da rede (LinkedIn 3000, Instagram 2200, X 280). |
+| Imagem | Guarda só a chave S3 (ex.: `usuarios/{id}/projetos/{id}/posts/{id}/{uuid}.png`), nunca a URL. |
 | Metrica | Registrada manualmente pelo usuário depois de publicar. |
-| Documento | O status acompanha o processamento: `pendente` → `processando` → `pronto` ou `erro`. |
+| Documento | Pertence a um projeto e só é usado pelo RAG desse projeto. O status acompanha o processamento: `pendente` → `processando` → `pronto` ou `erro`. Chave S3: `usuarios/{id}/projetos/{id}/documentos/{uuid}.{ext}`. |
 | Chunk | Apagado em cascata com o Documento. A dimensão do `embedding` vem da configuração; trocar o modelo de embeddings exige reprocessar tudo. Índices: HNSW no `embedding` e GIN no `tsvector`. |
 | PassoAgente | Um registro por tool chamada, exibido na tela da execução. |

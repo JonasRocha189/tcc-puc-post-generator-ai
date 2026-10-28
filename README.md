@@ -32,7 +32,8 @@
 
 ## Funcionalidades
 
-- **Assuntos:** cadastro completo (CRUD) com descrição, público-alvo e tom de voz.
+- **Projetos:** a marca do próprio usuário ou cada cliente, com público-alvo e tom de voz padrão (CRUD). Assuntos, documentos e conversas com o agente ficam dentro de um projeto, e o conteúdo de um cliente nunca se mistura com o de outro.
+- **Assuntos:** cadastro completo (CRUD) com descrição e, se quiser, público-alvo e tom de voz próprios.
 - **Posts e variações:** tela mestre/detalhe em que um post tem uma variação por rede (LinkedIn, Instagram, X), com texto, hashtags e imagem.
 - **Documentos:** upload direto para o S3, extração de texto, chunking e indexação vetorial para RAG.
 - **Agente de IA**, em dois modos:
@@ -148,7 +149,7 @@ cd e2e && npx playwright test                   # aceite
 
 ## Requisitos funcionais
 
-- [ ] **CRUD completo:** Assunto e Post
+- [ ] **CRUD completo:** Projeto, Assunto e Post
 - [ ] **Cadastro mestre/detalhe na mesma tela:** Post → Variações por rede
 - [ ] **Recurso de IA:** agente com RAG, busca na web e geração de imagem
 

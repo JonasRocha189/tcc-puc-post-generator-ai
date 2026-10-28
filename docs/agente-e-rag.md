@@ -15,14 +15,14 @@ sequenceDiagram
     participant T as Tools
     participant DB as PostgreSQL
 
-    U->>API: Pedido + modo (ideação ou criação)
-    API->>DB: Cria ExecucaoAgente
-    API->>A: Executa com usuario_id do token
+    U->>API: Pedido + modo + projeto_id
+    API->>DB: Confere se o projeto é do usuário e cria ExecucaoAgente
+    API->>A: Executa com usuario_id (token) e projeto_id
     loop até responder ou 8 iterações
         A->>LLM: Mensagens + schema das tools
         alt LLM pede tool
             LLM-->>A: tool + argumentos
-            A->>T: Executa (usuario_id injetado)
+            A->>T: Executa (usuario_id e projeto_id injetados)
             T-->>A: Resultado
             A->>DB: Grava PassoAgente
         else LLM responde
@@ -35,7 +35,8 @@ sequenceDiagram
 
 - **Máximo de 8 iterações.** Ao atingir o limite, a execução termina e o usuário é avisado.
 - **Prompts de sistema** separados por modo em `app/ai/agent/prompts/`.
-- **Segurança:** o `usuario_id` é injetado pelo backend em toda tool. Ele não aparece no schema que o LLM vê.
+- **Segurança:** o `usuario_id` e o `projeto_id` são injetados pelo backend em toda tool. Eles não aparecem no schema que o LLM vê: o agente só enxerga os dados do projeto em que foi chamado, e os documentos de um cliente nunca entram nos posts de outro.
+- **Voz da marca:** o público-alvo e o tom de voz vêm do assunto; quando o assunto não define, valem os do projeto.
 - **Rastreabilidade:** cada passo (tool, argumentos, duração, erro) vira log estruturado e registro em `PassoAgente`.
 
 ## Modos
@@ -52,11 +53,12 @@ Uma por arquivo em `app/ai/tools/`, com schema de entrada em Pydantic.
 | Tool | O que faz |
 | --- | --- |
 | `pesquisar_web(query)` | Busca no Tavily ou Brave, sempre retornando as fontes |
-| `listar_assuntos()` | Lista os assuntos do usuário |
-| `obter_assunto(id)` | Detalhes do assunto (público-alvo, tom de voz) |
-| `buscar_documentos(query)` | RAG híbrido nos documentos do usuário |
-| `buscar_posts_anteriores(assunto)` | Exemplos de estilo, só de posts aprovados ou publicados |
-| `analisar_desempenho()` | Agregados por assunto, dia, horário, rede e imagem. Com menos de 5 posts no grupo, informa que os dados são insuficientes |
+| `obter_projeto()` | Dados do projeto atual: nome, descrição, público-alvo e tom de voz padrão |
+| `listar_assuntos()` | Lista os assuntos do projeto |
+| `obter_assunto(id)` | Detalhes do assunto, com público-alvo e tom de voz já resolvidos (do assunto ou, se vazios, do projeto) |
+| `buscar_documentos(query)` | RAG híbrido nos documentos do projeto |
+| `buscar_posts_anteriores(assunto)` | Exemplos de estilo do projeto, só de posts aprovados ou publicados |
+| `analisar_desempenho()` | Agregados do projeto por assunto, dia, horário, rede e imagem. Com menos de 5 posts no grupo, informa que os dados são insuficientes |
 | `adaptar_para_rede(texto, rede)` | Ajusta formato e limite de caracteres da rede |
 | `gerar_imagem(prompt, formato)` | Gera imagem sem texto dentro dela e salva no S3 |
 | `salvar_rascunho(post)` | Salva o post com status `rascunho` (único status que o agente pode usar) |
@@ -102,7 +104,7 @@ sequenceDiagram
 1. **Similaridade vetorial** (pgvector, índice HNSW) sobre o embedding da consulta.
 2. **Full-text** (`tsvector` em português) sobre o conteúdo.
 
-Os dois rankings são combinados em uma lista única, por exemplo com Reciprocal Rank Fusion. A consulta **sempre** filtra por `usuario_id`.
+Os dois rankings são combinados em uma lista única, por exemplo com Reciprocal Rank Fusion. A consulta **sempre** filtra por `usuario_id` e `projeto_id` (via `Documento`).
 
 ## Testes
 

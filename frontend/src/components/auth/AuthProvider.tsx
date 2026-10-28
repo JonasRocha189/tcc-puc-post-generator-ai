@@ -1,7 +1,19 @@
 import { ScrollToTop } from "@/components/common/ScrollToTop";
+import { setTokenGetter } from "@/lib/api/http";
 import { auth0Config, authMode, DEFAULT_RETURN_TO } from "@/lib/auth/config";
-import { Auth0Provider } from "@auth0/auth0-react";
+import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
+import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router";
+
+/** Entrega ao cliente da API a função que obtém o access token do Auth0. */
+function ApiTokenBridge() {
+  const { getAccessTokenSilently } = useAuth0();
+  useEffect(() => {
+    setTokenGetter(() => getAccessTokenSilently());
+    return () => setTokenGetter(null);
+  }, [getAccessTokenSilently]);
+  return null;
+}
 
 /**
  * Rota raiz: envolve todas as páginas no Auth0Provider.
@@ -34,6 +46,7 @@ export default function AuthProvider() {
         navigate(appState?.returnTo ?? DEFAULT_RETURN_TO, { replace: true })
       }
     >
+      <ApiTokenBridge />
       {content}
     </Auth0Provider>
   );

@@ -8,11 +8,63 @@
   "nav": {
     "menu": "Menu",
     "dashboard": "Dashboard",
+    "projects": "Projetos",
     "calendar": "Calendário",
     "profile": "Perfil",
     "templateGroup": "Template (referência)",
-    "search": "Buscar...",
-    "toggleSidebar": "Abrir ou fechar o menu"
+    "toggleSidebar": "Abrir ou fechar o menu",
+    "moreOptions": "Mais opções",
+    "posts": "Posts",
+    "subjects": "Assuntos"
+  },
+  "projects": {
+    "title": "Projetos",
+    "subtitle": "Sua marca e seus clientes. Assuntos, documentos e posts ficam dentro de cada projeto.",
+    "current": "Projeto atual",
+    "currentBadge": "Atual",
+    "inUse": "Projeto em uso",
+    "use": "Usar este projeto",
+    "selectorLabel": "Projeto atual: {name}. Trocar de projeto",
+    "new": "Novo projeto",
+    "newTitle": "Novo projeto",
+    "editTitle": "Editar projeto",
+    "edit": "Editar",
+    "editLabel": "Editar {name}",
+    "deleteLabel": "Excluir {name}",
+    "manage": "Gerenciar projetos",
+    "createFirst": "Criar primeiro projeto",
+    "loadError": "Não foi possível carregar os projetos. Tente novamente.",
+    "empty": {
+      "title": "Você ainda não tem projetos",
+      "message": "Crie um projeto para sua marca ou para cada cliente. Depois, cadastre assuntos, envie documentos e gere posts dentro dele."
+    },
+    "form": {
+      "name": "Nome",
+      "namePlaceholder": "Ex.: Minha marca ou Acme Cloud",
+      "description": "Descrição",
+      "descriptionPlaceholder": "Sobre o que é este projeto ou cliente",
+      "voiceSection": "Voz da marca",
+      "voiceHint": "Valem para todos os assuntos do projeto. Cada assunto pode definir os seus, se precisar.",
+      "audience": "Público-alvo",
+      "audiencePlaceholder": "Ex.: Gestores de TI de empresas de médio porte",
+      "tone": "Tom de voz",
+      "tonePlaceholder": "Ex.: Profissional, próximo e sem jargão",
+      "create": "Criar projeto",
+      "save": "Salvar alterações",
+      "saving": "Salvando...",
+      "cancel": "Cancelar",
+      "saveError": "Não foi possível salvar o projeto. Tente novamente.",
+      "errors": {
+        "nameRequired": "Informe o nome do projeto.",
+        "tooLong": "Use no máximo {max} caracteres."
+      }
+    },
+    "delete": {
+      "title": "Excluir \"{name}\"?",
+      "message": "Esta ação não pode ser desfeita. Só é possível excluir projetos sem assuntos e documentos.",
+      "confirm": "Excluir",
+      "hasContent": "Este projeto ainda tem assuntos ou documentos. Exclua-os antes de excluir o projeto."
+    }
   },
   "language": {
     "label": "Idioma",
@@ -181,8 +233,137 @@
       "subject": "Assunto",
       "networks": "Redes",
       "status": "Status",
-      "openPost": "Abrir post",
-      "postPageSoon": "A página de edição do post ainda não foi criada."
+      "openPost": "Abrir post"
+    }
+  },
+  "form": {
+    "cancel": "Cancelar",
+    "saving": "Salvando...",
+    "errors": {
+      "tooLong": "Use no máximo {max} caracteres."
+    }
+  },
+  "deleteDialog": {
+    "confirm": "Excluir",
+    "deleting": "Excluindo...",
+    "cancel": "Cancelar",
+    "failed": "Não foi possível excluir. Tente novamente."
+  },
+  "subjects": {
+    "title": "Assuntos",
+    "subtitle": "Temas sobre os quais o projeto {project} publica.",
+    "new": "Novo assunto",
+    "newTitle": "Novo assunto",
+    "editTitle": "Editar assunto",
+    "edit": "Editar",
+    "editLabel": "Editar {name}",
+    "deleteLabel": "Excluir {name}",
+    "create": "Criar assunto",
+    "save": "Salvar alterações",
+    "saveError": "Não foi possível salvar o assunto. Tente novamente.",
+    "loadError": "Não foi possível carregar os assuntos. Tente novamente.",
+    "fromProject": "Do projeto",
+    "empty": {
+      "title": "Nenhum assunto ainda",
+      "message": "Assuntos organizam os posts do projeto, como \"Lançamentos\" ou \"Dicas de segurança\"."
+    },
+    "columns": {
+      "name": "Assunto",
+      "audience": "Público-alvo",
+      "tone": "Tom de voz",
+      "actions": "Ações"
+    },
+    "form": {
+      "name": "Nome",
+      "namePlaceholder": "Ex.: Dicas de segurança",
+      "description": "Descrição",
+      "descriptionPlaceholder": "O que entra neste assunto",
+      "voiceSection": "Voz da marca (opcional)",
+      "voiceHint": "Deixe em branco para usar a voz do projeto {project}.",
+      "inherits": "Em branco, usa o do projeto: \"{value}\"",
+      "inheritsNothing": "O projeto também não define este campo.",
+      "errors": {
+        "nameRequired": "Informe o nome do assunto."
+      }
+    },
+    "delete": {
+      "title": "Excluir \"{name}\"?",
+      "message": "Esta ação não pode ser desfeita. Só é possível excluir assuntos sem posts.",
+      "confirm": "Excluir",
+      "hasPosts": "Este assunto ainda tem posts. Exclua ou mova os posts antes de excluir o assunto."
+    }
+  },
+  "posts": {
+    "title": "Posts",
+    "subtitle": "Posts do projeto {project}, com uma variação para cada rede.",
+    "new": "Novo post",
+    "newTitle": "Novo post",
+    "editTitle": "Editar post",
+    "edit": "Editar",
+    "editLabel": "Editar {name}",
+    "deleteLabel": "Excluir {name}",
+    "create": "Criar post",
+    "save": "Salvar alterações",
+    "saveError": "Não foi possível salvar o post. Tente novamente.",
+    "loadError": "Não foi possível carregar os posts. Tente novamente.",
+    "noDate": "Sem data",
+    "empty": "Nenhum post ainda. Crie o primeiro ou peça ao agente.",
+    "emptyFiltered": "Nenhum post com esses filtros.",
+    "needSubject": {
+      "title": "Crie um assunto primeiro",
+      "message": "Todo post pertence a um assunto do projeto. Cadastre um assunto para começar."
+    },
+    "filters": {
+      "status": "Status",
+      "subject": "Assunto",
+      "all": "Todos",
+      "clear": "Limpar filtros"
+    },
+    "columns": {
+      "title": "Título",
+      "subject": "Assunto",
+      "networks": "Redes",
+      "date": "Data prevista",
+      "status": "Status",
+      "actions": "Ações"
+    },
+    "delete": {
+      "title": "Excluir \"{name}\"?",
+      "message": "O post e todas as suas variações serão excluídos. Esta ação não pode ser desfeita.",
+      "confirm": "Excluir"
+    },
+    "form": {
+      "postSection": "Post",
+      "title": "Título",
+      "titlePlaceholder": "Ex.: 5 erros ao migrar para a nuvem",
+      "titleHint": "Uso interno, para encontrar o post. Não é publicado.",
+      "subject": "Assunto",
+      "subjectPlaceholder": "Selecione um assunto",
+      "status": "Status",
+      "statusHint": "O agente sempre cria como rascunho; aprovar e publicar é com você.",
+      "scheduledFor": "Data prevista",
+      "variations": "Variações por rede",
+      "variationsHint": "Um texto para cada rede, respeitando o formato e o limite de caracteres de cada uma.",
+      "tabFilled": "(com variação)",
+      "tabEmpty": "(sem variação)",
+      "tabError": "(com erro)",
+      "noVariation": "Este post ainda não tem variação para o {network}.",
+      "addVariation": "Adicionar variação para o {network}",
+      "removeVariation": "Remover variação do {network}",
+      "text": "Texto",
+      "textPlaceholder": "Texto do post para o {network}",
+      "hashtags": "Hashtags",
+      "hashtagsPlaceholder": "#nuvem #seguranca",
+      "hashtagsHint": "Separe por espaço ou vírgula. O # é opcional.",
+      "counter": "{count} / {limit} caracteres (com hashtags)",
+      "errors": {
+        "titleRequired": "Informe o título do post.",
+        "subjectRequired": "Selecione o assunto.",
+        "textRequired": "Escreva o texto desta variação.",
+        "tooLongForNetwork": "Passou do limite de {limit} caracteres do {network} (contando as hashtags).",
+        "tooManyHashtags": "Use no máximo 30 hashtags.",
+        "variationRequired": "Adicione a variação de pelo menos uma rede."
+      }
     }
   }
 }
