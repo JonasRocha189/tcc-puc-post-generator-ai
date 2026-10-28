@@ -1,6 +1,11 @@
 // API FICTÍCIA de posts (ver lib/api/mockDb.ts)
 import { ApiError } from "@/lib/api/http";
-import { agoraIso, latencia, mockDb } from "@/lib/api/mockDb";
+import {
+  agoraIso,
+  latencia,
+  mockDb,
+  removerDependentesDasVariacoes,
+} from "@/lib/api/mockDb";
 import { contarCaracteres } from "./redes";
 import type { PostsService } from "./service";
 import type { Post, PostInput } from "./types";
@@ -13,10 +18,18 @@ function validarAssunto(assuntoId: string) {
   }
 }
 
-function montarVariacoes(postId: string, input: PostInput): Post["variacoes"] {
+/**
+ * A variação de uma rede que continua no post mantém o id (e, com ele,
+ * as imagens e métricas); a de uma rede nova ganha um id novo.
+ */
+function montarVariacoes(
+  postId: string,
+  input: PostInput,
+  atuais: Post["variacoes"] = [],
+): Post["variacoes"] {
   return input.variacoes.map((v) => ({
     ...v,
-    id: `${postId}-${v.rede}`,
+    id: atuais.find((a) => a.rede === v.rede)?.id ?? `${postId}-${v.rede}`,
     contagem_caracteres: contarCaracteres(v.texto, v.hashtags),
   }));
 }
@@ -38,8 +51,12 @@ export const postsMock: PostsService = {
       .filter((p) => !filtros.status || p.status === filtros.status)
       .filter((p) => !filtros.assunto_id || p.assunto_id === filtros.assunto_id)
       .filter((p) => !filtros.de || (dia(p.data_prevista) ?? "") >= filtros.de)
-      .filter((p) => !filtros.ate || (dia(p.data_prevista) ?? "9999") <= filtros.ate)
-      .sort((a, b) => (b.data_prevista ?? "").localeCompare(a.data_prevista ?? ""));
+      .filter(
+        (p) => !filtros.ate || (dia(p.data_prevista) ?? "9999") <= filtros.ate,
+      )
+      .sort((a, b) =>
+        (b.data_prevista ?? "").localeCompare(a.data_prevista ?? ""),
+      );
   },
 
   async obter(id) {
@@ -68,20 +85,27 @@ export const postsMock: PostsService = {
     await latencia();
     const atual = mockDb.posts.encontrar(id, NOME);
     validarAssunto(input.assunto_id);
+    const variacoes = montarVariacoes(id, input, atual.variacoes);
+    removerDependentesDasVariacoes(
+      atual.variacoes
+        .filter((v) => !variacoes.some((n) => n.id === v.id))
+        .map((v) => v.id),
+    );
     return mockDb.posts.substituir({
       ...atual,
       assunto_id: input.assunto_id,
       titulo: input.titulo,
       status: input.status,
       data_prevista: input.data_prevista,
-      variacoes: montarVariacoes(id, input),
+      variacoes,
       atualizado_em: agoraIso(),
     });
   },
 
   async excluir(id) {
     await latencia();
-    mockDb.posts.encontrar(id, NOME);
+    const post = mockDb.posts.encontrar(id, NOME);
+    removerDependentesDasVariacoes(post.variacoes.map((v) => v.id));
     mockDb.posts.remover(id);
   },
 };

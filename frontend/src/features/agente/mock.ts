@@ -1,8 +1,14 @@
 // AGENTE FICTÍCIO (ver lib/api/mockDb.ts e ./mockRoteiro.ts).
 // Os passos do roteiro "aparecem" um a um conforme o tempo passa, imitando
 // o backend que roda o agente em segundo plano e grava cada PassoAgente.
+import { imagemFicticia } from "@/features/imagens/ficticia";
 import { contarCaracteres } from "@/features/posts/redes";
-import { agoraIso, latencia, mockDb, type ExecucaoMock } from "@/lib/api/mockDb";
+import {
+  agoraIso,
+  latencia,
+  mockDb,
+  type ExecucaoMock,
+} from "@/lib/api/mockDb";
 import { criarRoteiro } from "./mockRoteiro";
 import type { AgenteService } from "./service";
 import type { ExecucaoAgente } from "./types";
@@ -37,7 +43,28 @@ function finalizar(exec: ExecucaoMock): ExecucaoMock {
       }),
     });
   }
-  return mockDb.execucoes.substituir({ ...exec, post_id: postId, finalizada: true });
+  if (rascunho && postId && postId !== exec.post_id) {
+    // A imagem gerada pelo agente fica em cada variação do rascunho
+    const prompt = exec.roteiro.passos.find((p) => p.tool === "gerar_imagem")
+      ?.argumentos.prompt;
+    for (const rede of rascunho.redes) {
+      const variacaoId = `${postId}-${rede}`;
+      const formato = rede === "instagram" ? "4:5" : "1:1";
+      mockDb.imagens.inserir({
+        id: crypto.randomUUID(),
+        variacao_id: variacaoId,
+        formato,
+        prompt: typeof prompt === "string" ? prompt : null,
+        url: imagemFicticia(variacaoId, formato),
+        criado_em: agoraIso(),
+      });
+    }
+  }
+  return mockDb.execucoes.substituir({
+    ...exec,
+    post_id: postId,
+    finalizada: true,
+  });
 }
 
 /** Monta a resposta da API a partir do tempo decorrido desde o início. */
@@ -54,7 +81,10 @@ function materializar(registro: ExecucaoMock): ExecucaoAgente {
     ? total
     : Math.min(total, Math.floor(decorrido / INTERVALO_MS));
 
-  const duracaoTotal = exec.roteiro.passos.reduce((soma, p) => soma + (p.duracao_ms ?? 0), 0);
+  const duracaoTotal = exec.roteiro.passos.reduce(
+    (soma, p) => soma + (p.duracao_ms ?? 0),
+    0,
+  );
 
   // Chamadas em paralelo (ex.: adaptar para LinkedIn e para X) contam como uma iteração
   const passosVistos = exec.roteiro.passos.slice(0, visiveis);
@@ -80,7 +110,9 @@ function materializar(registro: ExecucaoMock): ExecucaoAgente {
     })),
     iniciada_em: exec.iniciada_em,
     finalizada_em: exec.finalizada
-      ? new Date(new Date(exec.iniciada_em).getTime() + duracaoTotal).toISOString()
+      ? new Date(
+          new Date(exec.iniciada_em).getTime() + duracaoTotal,
+        ).toISOString()
       : null,
   };
 }
@@ -89,10 +121,14 @@ export const agenteMock: AgenteService = {
   async executar({ projeto_id, modo, pedido }) {
     await latencia();
     const projeto = mockDb.projetos.encontrar(projeto_id, "Projeto");
-    const assuntos = mockDb.assuntos.todos().filter((a) => a.projeto_id === projeto_id);
+    const assuntos = mockDb.assuntos
+      .todos()
+      .filter((a) => a.projeto_id === projeto_id);
     // Usa o assunto citado no pedido; senão, o primeiro do projeto
     const assunto =
-      assuntos.find((a) => pedido.toLowerCase().includes(a.nome.toLowerCase())) ??
+      assuntos.find((a) =>
+        pedido.toLowerCase().includes(a.nome.toLowerCase()),
+      ) ??
       assuntos[0] ??
       null;
     const documentos = mockDb.documentos

@@ -7,6 +7,8 @@ export type Rede = "linkedin" | "instagram" | "x";
 export type ModoAgente = "ideacao" | "criacao";
 export type StatusExecucao = "executando" | "concluida" | "erro" | "limite_atingido";
 export type StatusDocumento = "pendente" | "processando" | "pronto" | "erro";
+/** Proporção da imagem (largura:altura) */
+export type FormatoImagem = "1:1" | "4:5" | "16:9";
 
 // Nomes de marca: iguais em todos os idiomas
 export const REDE_LABEL: Record<Rede, string> = {

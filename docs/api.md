@@ -28,16 +28,18 @@
 | **Posts (mestre-detalhe)** | | |
 | GET | `/posts` 🅿 | Lista os posts do projeto (via assunto), já com as variações, ordenados pela `data_prevista` (mais recentes primeiro). Filtros: `assunto_id`, `status` e período (`?de=AAAA-MM-DD&ate=AAAA-MM-DD`, usado pelo calendário) |
 | POST | `/posts` | Cria o post com suas variações (corpo abaixo). `422` se o assunto não for de um projeto do usuário |
-| GET | `/posts/{id}` | Detalha o post com variações e imagens |
-| PUT | `/posts/{id}` | Atualiza o post e **substitui** todas as variações pelas enviadas (a que não vier é removida) |
-| DELETE | `/posts/{id}` | Remove o post e suas variações |
+| GET | `/posts/{id}` | Detalha o post com as variações |
+| PUT | `/posts/{id}` | Atualiza o post e **substitui** as variações pelas enviadas. A variação de uma rede que continua **mantém o `id`** (e as imagens e métricas); a de uma rede que não vier é removida junto com as imagens e métricas |
+| DELETE | `/posts/{id}` | Remove o post, as variações, as imagens (e os objetos no S3) e as métricas |
 | **Imagens** | | |
-| POST | `/variacoes/{id}/imagens/upload-url` | URL pré-assinada para enviar uma imagem |
-| GET | `/imagens/{id}/url` | URL pré-assinada de leitura |
-| DELETE | `/imagens/{id}` | Remove |
+| GET | `/variacoes/{id}/imagens` | Imagens da variação (mais antigas primeiro), cada uma com `url`: URL pré-assinada de leitura que expira em 15 minutos |
+| POST | `/variacoes/{id}/imagens/upload-url` | Corpo `{tipo, tamanho_bytes}` (`png`, `jpeg` ou `webp`, até 5 MB). `422` se inválido ou se a variação já tiver 10 imagens. Responde `{chave, upload_url}`; ainda não cria registro |
+| POST | `/variacoes/{id}/imagens` | Corpo `{chave, formato}`, depois do PUT no S3. Confere se a chave é desta variação e se o objeto existe, e cria a Imagem (`prompt: null`) |
+| DELETE | `/imagens/{id}` | Remove a imagem e o objeto no S3 |
 | **Métricas e relatório** | | |
-| GET | `/variacoes/{id}/metricas` | Lista métricas da variação |
-| POST | `/variacoes/{id}/metricas` | Registra métricas |
+| GET | `/variacoes/{id}/metricas` | Coletas da variação, da mais recente para a mais antiga |
+| POST | `/variacoes/{id}/metricas` | Registra uma coleta (corpo abaixo). `422` se o post não estiver `publicado`, se algum número for negativo, se `coletado_em` for antes de `publicado_em` ou se alguma data estiver no futuro |
+| DELETE | `/metricas/{id}` | Remove uma coleta (para corrigir um registro errado) |
 | GET | `/relatorio/desempenho` 🅿 | Agregados do projeto por assunto, rede, dia, horário e imagem |
 | **Documentos** | | |
 | GET | `/documentos` 🅿 | Lista os documentos do projeto (mais recentes primeiro), com status de processamento |
@@ -66,6 +68,44 @@
 
 - No máximo uma variação por rede (`linkedin`, `instagram`, `x`) e pelo menos uma.
 - `hashtags` sem o `#`. O backend calcula `contagem_caracteres` do texto final (texto, linha em branco e hashtags com `#`) e responde `422` se passar do limite da rede: LinkedIn 3000, Instagram 2200, X 280. O frontend usa a mesma regra (`features/posts/redes.ts`).
+
+## Imagens e métricas
+
+Ficam na aba de cada variação do post e são gravadas na hora, fora do `PUT /posts/{id}` (dependem do `id` da variação já salva).
+
+**Imagem** (item de `GET /variacoes/{id}/imagens`):
+
+```json
+{
+  "id": "uuid",
+  "variacao_id": "uuid",
+  "formato": "4:5",
+  "prompt": "ilustração sobre checklist de segurança, sem texto",
+  "url": "https://bucket.s3.amazonaws.com/usuarios/…?X-Amz-Signature=…",
+  "criado_em": "2026-10-28T12:00:00Z"
+}
+```
+
+- `formato`: `1:1`, `4:5` ou `16:9`. No envio, o frontend escolhe o mais próximo das dimensões da imagem.
+- `prompt` é preenchido quando a imagem foi gerada pelo agente (`gerar_imagem`) e fica `null` quando o usuário enviou.
+- O banco guarda só a chave S3; a `url` é gerada a cada listagem.
+
+**Corpo de `POST /variacoes/{id}/metricas`:**
+
+```json
+{
+  "publicado_em": "2026-10-19T18:00:00Z",
+  "coletado_em": "2026-10-26T18:00:00Z",
+  "impressoes": 2720,
+  "curtidas": 65,
+  "comentarios": 13,
+  "compartilhamentos": 9,
+  "cliques": 22
+}
+```
+
+- Os números são o **total acumulado** no momento da coleta (o que a rede mostra), não a diferença desde a coleta anterior. A coleta mais recente é a que vale.
+- Taxa de engajamento = (curtidas + comentários + compartilhamentos + cliques) ÷ impressões. Mesma regra no frontend (`features/metricas/calculo.ts`) e no relatório.
 
 ## Resposta de `GET /agente/execucoes/{id}`
 
