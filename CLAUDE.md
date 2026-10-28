@@ -19,7 +19,7 @@ O usuário registra as **métricas** dos posts publicados, e um **relatório de 
 
 | Camada | Tecnologia |
 |---|---|
-| Frontend | React + Vite + TypeScript, Tailwind CSS, shadcn/ui, React Router, TanStack Query, React Hook Form + Zod, Recharts |
+| Frontend | React + Vite + TypeScript, Tailwind CSS, template TailAdmin (versão gratuita; não misturar com shadcn/ui), React Router, TanStack Query, React Hook Form + Zod, ApexCharts (já vem no TailAdmin) |
 | Backend | Python 3.12+, FastAPI, SQLAlchemy 2.x (async), Alembic, Pydantic v2, pydantic-settings |
 | Banco | PostgreSQL 16 + pgvector (índice HNSW) + full-text search (`tsvector`) para busca híbrida |
 | IA | LLM com tool calling via SDK oficial (provedor **a definir**, atrás de abstração), embeddings, geração de imagem, busca web via Tavily ou Brave |
@@ -164,7 +164,8 @@ No banco, salve **apenas a chave do objeto S3** (ex.: `usuarios/{id}/posts/{id}/
 
 ## Convenções
 
-- **Idioma:** domínio, entidades, rotas e mensagens de interface em português (`assuntos`, `posts`, `variacoes`). Termos técnicos genéricos podem ficar em inglês (`service`, `repository`, `provider`).
+- **Idioma:** domínio, entidades e rotas em português (`assuntos`, `posts`, `variacoes`). Termos técnicos genéricos podem ficar em inglês (`service`, `repository`, `provider`).
+- **Interface multilíngue (pt-BR e en):** i18next. Nenhum texto de interface fica fixo no componente: todo texto novo entra em `frontend/src/locales/pt-BR/app.json` **e** `frontend/src/locales/en/app.json` (namespace `app`), e é lido com `useTranslation("app")`. Números e datas usam `useFormat()` (`src/lib/format.ts`). pt-BR é o idioma padrão.
 - **Backend:** routers finos, regra de negócio em `services/`, acesso a dados em `repositories/`. Tipagem completa (mypy sem erros). Funções assíncronas para I/O.
 - **API:** REST, prefixo `/api/v1`, erros no formato `{"detail": ...}`. Documentação via OpenAPI do FastAPI.
 - **Frontend:** componentes funcionais com TypeScript estrito; chamadas à API apenas via TanStack Query em `features/*/api.ts`; validação de formulário com Zod; layout responsivo desde o início (mobile-first).
@@ -244,3 +245,4 @@ O núcleo (CRUDs, mestre-detalhe, RAG, agente, OAuth, CI/CD, testes, deploy) nun
 - Prazo para finalizacao 15/11/2026: prefira a solução mais simples que atenda aos requisitos do TCC.
 - Não adicione dependências sem necessidade clara; se adicionar, explique o motivo.
 - Mantenha o README e este arquivo atualizados quando mudar comandos, estrutura ou decisões.
+- A documentação técnica fica em `docs/` (índice em `docs/README.md`). Todo push de funcionalidade nova atualiza `docs/changelog.md` e os documentos afetados; decisões novas entram em `docs/decisoes.md`.

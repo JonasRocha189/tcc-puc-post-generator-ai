@@ -57,7 +57,7 @@
 
 | Camada | Tecnologia |
 | --- | --- |
-| Frontend | React, Vite, TypeScript, Tailwind CSS, shadcn/ui, TanStack Query, React Hook Form + Zod, Recharts |
+| Frontend | React, Vite, TypeScript, Tailwind CSS, template TailAdmin, TanStack Query, React Hook Form + Zod, ApexCharts |
 | Backend (API) | Python, FastAPI, SQLAlchemy 2 (async), Alembic, Pydantic v2 |
 | Banco de dados | PostgreSQL 16 + pgvector, com busca híbrida (vetorial + full-text) |
 | IA | LLM com tool calling (provedor a definir), embeddings, geração de imagem, busca web (Tavily ou Brave) |
@@ -83,7 +83,7 @@ Navegador ──HTTPS──> Traefik (k3s)
 
 O loop do agente é implementado diretamente sobre o tool calling do SDK do provedor, sem LangChain ou LlamaIndex. O código depende apenas de interfaces (`LLMProvider`, `EmbeddingProvider`, `ImageProvider`, `VectorStore`), o que permite trocar de provedor.
 
-Os modelos C4 (contexto, contêineres, componentes), o diagrama de classes e o modelo de implantação ficarão em [`docs/`](docs/) *(a criar)*.
+A documentação técnica está em [`docs/`](docs/README.md): [modelos C4](docs/arquitetura.md) (contexto, contêineres, componentes), [diagrama de classes](docs/modelo-de-dados.md), [agente e RAG](docs/agente-e-rag.md), [API](docs/api.md), [modelo de implantação](docs/implantacao.md), [decisões](docs/decisoes.md) e [changelog](docs/changelog.md).
 
 ## Como executar localmente
 

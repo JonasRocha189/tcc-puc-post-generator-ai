@@ -1,0 +1,76 @@
+# Rotas do frontend
+
+> Status: **em implementação**. Atualize esta página sempre que uma rota for criada, alterada ou removida.
+>
+> **Implementadas:** `/login`, `/cadastro`, `/erro`, `/`, `/dashboard` e `/calendario` (com dados de exemplo), `/perfil` e `*`.
+>
+> Todas as telas estão em **português e inglês**. O seletor de idioma fica no cabeçalho (entre o tema e o usuário) e no rodapé das telas de login e cadastro.
+> As páginas de demonstração do TailAdmin ficam em `/template/*` só como referência visual e devem ser removidas antes da entrega.
+
+Roteamento com React Router. Páginas carregadas sob demanda (`React.lazy`) para reduzir o bundle inicial.
+
+## Públicas
+
+| Rota | Página | Observação |
+| --- | --- | --- |
+| `/login` | Tela de entrada com o botão **Entrar** e link para `/cadastro` | Redireciona para o Auth0 (Universal Login) e é também o `redirect_uri` de volta do Auth0 |
+| `/cadastro` | Tela de cadastro com o botão **Criar conta** | Abre o Auth0 direto na tela de cadastro (`screen_hint=signup`). Mantida como garantia, mesmo que o fluxo principal comece em `/login` |
+| `/erro` | Página de erro com botão "tentar novamente" | Recebe erros do Auth0 (`?error=…&error_description=…`, ex.: acesso negado). O mesmo componente é o `errorElement` do roteador, exibido em falhas inesperadas |
+| `*` | Página não encontrada (404) | Reaproveita o `NotFound` do template. Renderizada na própria URL digitada, sem redirecionar |
+
+## Protegidas
+
+Dentro do `AppLayout`. Sem sessão, o usuário é redirecionado para `/login`.
+
+| Rota | Página | API usada | Requisito do TCC |
+| --- | --- | --- | --- |
+| `/` | Redireciona para `/dashboard` | | |
+| `/dashboard` | Posts por status, próximos posts previstos, últimas execuções do agente e **todas as métricas de desempenho** (impressões e engajamento por assunto, rede, dia e horário) | `GET /posts`, `GET /agente/execucoes`, `GET /relatorio/desempenho` | Relatório de desempenho |
+| `/assuntos` | Lista de assuntos | `GET /assuntos`, `DELETE /assuntos/{id}` | CRUD |
+| `/assuntos/novo` | Cadastro de assunto | `POST /assuntos` | CRUD |
+| `/assuntos/:id` | Edição de assunto | `GET`, `PUT /assuntos/{id}` | CRUD |
+| `/posts` | Lista de posts, com filtros na URL (`?status=rascunho&assunto=…`) | `GET /posts`, `DELETE /posts/{id}` | CRUD |
+| `/posts/novo` | Cadastro de post com suas variações | `POST /posts` | CRUD + mestre-detalhe |
+| `/posts/:id` | **Mestre-detalhe**: dados do post no topo e uma aba por rede (LinkedIn, Instagram, X) com texto, hashtags, contagem de caracteres, imagem e métricas | `GET`, `PUT /posts/{id}`, endpoints de imagens e métricas | Mestre-detalhe |
+| `/calendario` | Posts no calendário pela `data_prevista`, com cor por status. Clicar em um post abre `/posts/:id` | `GET /posts?de=…&ate=…` | |
+| `/documentos` | Lista com status de processamento e upload na mesma tela | `/documentos/*` | IA (RAG) |
+| `/agente` | Conversa com o agente, com troca de modo (`?modo=ideacao` ou `criacao`) | `POST /agente/execucoes` | IA |
+| `/agente/execucoes` | Histórico de execuções | `GET /agente/execucoes` | |
+| `/agente/execucoes/:id` | Uma execução com seus passos (tool, argumentos, duração, erro) | `GET /agente/execucoes/{id}` | |
+| `/perfil` | Dados do usuário (Auth0) e botão de alterar senha | Auth0 | Ciclo de vida do usuário |
+
+## Menu lateral
+
+```
+Dashboard
+Conteúdo
+  ├─ Posts
+  ├─ Calendário
+  ├─ Assuntos
+  └─ Documentos
+Agente
+  ├─ Nova conversa
+  └─ Histórico
+─────────
+Perfil · Sair
+```
+
+## Decisões
+
+- **Sem formulários próprios de login e cadastro.** As páginas `/signin` e `/signup` do template saíram; `/login` e `/cadastro` só levam ao Auth0, que hospeda login, cadastro e redefinição de senha.
+- **Modo de desenvolvimento sem Auth0.** Sem `VITE_AUTH0_DOMAIN` e `VITE_AUTH0_CLIENT_ID`, o `npm run dev` entra com um usuário fictício (ver `frontend/.env.example`). No build de produção isso nunca acontece: sem configuração, o login fica indisponível.
+- **Roteador com data router** (`createBrowserRouter`), necessário para o `errorElement` e para o carregamento sob demanda (`lazy`) de cada página.
+- **Métricas ficam no detalhe do post**, na aba de cada variação, pois cada métrica pertence a uma variação.
+- **"Novo" e "editar" usam o mesmo formulário**: `/novo` começa vazio e `/:id` carrega os dados. Um schema Zod por entidade.
+- **Filtros na query string**, não em estado do componente: links compartilháveis, botão voltar funciona e os testes Playwright abrem a lista já filtrada.
+- **Calendário reaproveita o do template** (FullCalendar, já instalado). Mostra os posts no mês, com cor por status; não cria eventos próprios. Clicar num post abre um modal com os detalhes; o botão "Abrir post" será ligado a `/posts/:id` quando essa página existir.
+- **Sem rota `/404`.** O `*` mostra o 404 na URL que o usuário digitou, preservando o endereço e o histórico. Erros de verdade (Auth0, falhas inesperadas) vão para `/erro`.
+- **Sem rota `/relatorio`.** Desde 2026-10-27, todas as métricas de desempenho ficam no `/dashboard` (por enquanto). As métricas de cada variação continuam sendo registradas no detalhe do post.
+
+## Ordem de implementação
+
+1. Auth0 + layout protegido + `/login` + `/perfil`
+2. `/assuntos`
+3. `/posts` e `/posts/:id`, depois `/calendario`
+4. `/documentos` e `/agente`
+5. `/dashboard`

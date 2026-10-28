@@ -1,0 +1,188 @@
+{
+  "common": {
+    "loading": "Carregando...",
+    "sampleData": "Dados de exemplo",
+    "home": "Início",
+    "close": "Fechar"
+  },
+  "nav": {
+    "menu": "Menu",
+    "dashboard": "Dashboard",
+    "calendar": "Calendário",
+    "profile": "Perfil",
+    "templateGroup": "Template (referência)",
+    "search": "Buscar...",
+    "toggleSidebar": "Abrir ou fechar o menu"
+  },
+  "language": {
+    "label": "Idioma",
+    "select": "Selecionar idioma"
+  },
+  "brand": {
+    "tagline": "Posts para LinkedIn, Instagram e X com um agente de IA que conhece seus documentos e a voz da sua marca."
+  },
+  "auth": {
+    "checkingSession": "Verificando sua sessão...",
+    "redirecting": "Redirecionando...",
+    "auth0Hint": "Você será levado à página segura do Auth0 para continuar.",
+    "devModeTitle": "Modo de desenvolvimento:",
+    "devModeText": "o Auth0 não está configurado, então você entrará com um usuário fictício. Veja o {file}.",
+    "missingConfig": "Autenticação não configurada: defina VITE_AUTH0_DOMAIN e VITE_AUTH0_CLIENT_ID.",
+    "mockUserName": "Usuário de Teste",
+    "login": {
+      "metaTitle": "Entrar",
+      "metaDescription": "Acesse sua conta do PostPilot",
+      "title": "Entrar",
+      "description": "Acesse sua conta para criar posts com o agente de IA a partir dos seus documentos.",
+      "action": "Entrar",
+      "switchText": "Ainda não tem conta?",
+      "switchLink": "Criar conta"
+    },
+    "signup": {
+      "metaTitle": "Criar conta",
+      "metaDescription": "Crie sua conta no PostPilot",
+      "title": "Criar conta",
+      "description": "Cadastre-se para organizar seus assuntos, enviar documentos e gerar posts para LinkedIn, Instagram e X.",
+      "action": "Criar conta",
+      "switchText": "Já tem conta?",
+      "switchLink": "Entrar"
+    }
+  },
+  "userMenu": {
+    "label": "Menu do usuário",
+    "account": "Conta",
+    "profile": "Meu perfil",
+    "logout": "Sair"
+  },
+  "profile": {
+    "title": "Perfil",
+    "metaDescription": "Seus dados de acesso",
+    "fallbackName": "Usuário",
+    "emailVerified": "E-mail verificado",
+    "emailNotVerified": "E-mail não verificado",
+    "accessVia": "Acesso via {method}",
+    "methods": {
+      "auth0": "E-mail e senha"
+    },
+    "security": "Segurança",
+    "passwordIntro": "Para alterar sua senha, enviaremos um link de redefinição para",
+    "changePassword": "Alterar senha",
+    "sending": "Enviando...",
+    "passwordSent": "E-mail enviado. Siga o link recebido para criar a nova senha.",
+    "simulated": "(simulado no modo de desenvolvimento)",
+    "passwordError": "Não foi possível enviar o e-mail de redefinição de senha.",
+    "socialPassword": "Você entra com {method}, então sua senha é gerenciada por esse serviço.",
+    "session": "Sessão",
+    "sessionText": "Encerra sua sessão neste navegador.",
+    "logout": "Sair da conta"
+  },
+  "error": {
+    "metaTitle": "Erro",
+    "authTitle": "Não foi possível entrar",
+    "authGeneric": "Ocorreu um erro durante a autenticação.",
+    "authCodes": {
+      "access_denied": "O acesso foi negado. Verifique seus dados e tente de novo.",
+      "login_required": "Sua sessão expirou. Entre novamente para continuar.",
+      "consent_required": "É preciso autorizar o PostPilot para continuar."
+    },
+    "routeTitle": "Erro {status}",
+    "routeMessage": "Não foi possível carregar a página.",
+    "unexpectedTitle": "Algo deu errado",
+    "unexpectedMessage": "Ocorreu um erro inesperado. Tente novamente em instantes ou volte ao dashboard.",
+    "retryLogin": "Tentar entrar novamente",
+    "retry": "Tentar novamente",
+    "goDashboard": "Ir para o dashboard"
+  },
+  "notFound": {
+    "metaTitle": "Página não encontrada",
+    "title": "Página não encontrada",
+    "message": "Não encontramos a página que você está procurando.",
+    "back": "Voltar ao dashboard"
+  },
+  "domain": {
+    "postStatus": {
+      "rascunho": "Rascunho",
+      "aprovado": "Aprovado",
+      "publicado": "Publicado"
+    },
+    "agentMode": {
+      "ideacao": "Ideação",
+      "criacao": "Criação"
+    },
+    "runStatus": {
+      "concluida": "Concluída",
+      "erro": "Erro",
+      "limite_atingido": "Limite atingido"
+    },
+    "posts_one": "{count} post",
+    "posts_other": "{count} posts"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Seus posts, o agente e o desempenho nas redes.",
+    "metaDescription": "Resumo dos seus posts, do agente e do desempenho",
+    "cards": {
+      "drafts": "Rascunhos",
+      "draftsHint": "aguardando revisão",
+      "approved": "Aprovados",
+      "approvedHint": "prontos para publicar",
+      "published": "Publicados",
+      "impressions": "{count} impressões",
+      "engagementRate": "Taxa de engajamento",
+      "engagementHint": "interações / impressões"
+    },
+    "byNetwork": {
+      "title": "Engajamento por rede",
+      "subtitle": "Interações por tipo; entre parênteses, a taxa de engajamento",
+      "likes": "Curtidas",
+      "comments": "Comentários",
+      "shares": "Compartilhamentos",
+      "clicks": "Cliques"
+    },
+    "bestTime": {
+      "title": "Melhor dia e horário",
+      "subtitle": "Taxa de engajamento por dia da semana e faixa de horário",
+      "morning": "Manhã (6h–12h)",
+      "afternoon": "Tarde (12h–18h)",
+      "evening": "Noite (18h–24h)",
+      "engagement": "Engajamento: {value}",
+      "insufficient": "Amostra insuficiente (mín. {min} posts)"
+    },
+    "bySubject": {
+      "title": "Desempenho por assunto",
+      "subtitle": "Grupos com menos de {min} posts ainda não permitem conclusões",
+      "subject": "Assunto",
+      "posts": "Posts",
+      "impressions": "Impressões",
+      "engagement": "Engajamento",
+      "insufficient": "Amostra insuficiente"
+    },
+    "upcoming": {
+      "title": "Próximos posts",
+      "subtitle": "Previstos para os próximos dias",
+      "empty": "Nenhum post previsto."
+    },
+    "agentRuns": {
+      "title": "Últimas execuções do agente",
+      "subtitle": "Pedidos recentes e quantos passos cada um levou",
+      "empty": "O agente ainda não foi usado.",
+      "steps_one": "{count} passo",
+      "steps_other": "{count} passos"
+    }
+  },
+  "calendar": {
+    "title": "Calendário",
+    "metaDescription": "Seus posts organizados pela data prevista",
+    "subtitle": "Seus posts pela data prevista de publicação.",
+    "today": "Hoje",
+    "more": "+{count} mais",
+    "details": {
+      "scheduledFor": "Previsto para",
+      "subject": "Assunto",
+      "networks": "Redes",
+      "status": "Status",
+      "openPost": "Abrir post",
+      "postPageSoon": "A página de edição do post ainda não foi criada."
+    }
+  }
+}

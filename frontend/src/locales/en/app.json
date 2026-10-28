@@ -1,0 +1,188 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "sampleData": "Sample data",
+    "home": "Home",
+    "close": "Close"
+  },
+  "nav": {
+    "menu": "Menu",
+    "dashboard": "Dashboard",
+    "calendar": "Calendar",
+    "profile": "Profile",
+    "templateGroup": "Template (reference)",
+    "search": "Search...",
+    "toggleSidebar": "Toggle menu"
+  },
+  "language": {
+    "label": "Language",
+    "select": "Select language"
+  },
+  "brand": {
+    "tagline": "Posts for LinkedIn, Instagram and X with an AI agent that knows your documents and your brand voice."
+  },
+  "auth": {
+    "checkingSession": "Checking your session...",
+    "redirecting": "Redirecting...",
+    "auth0Hint": "You will be taken to Auth0's secure page to continue.",
+    "devModeTitle": "Development mode:",
+    "devModeText": "Auth0 is not configured, so you will sign in as a fake user. See {file}.",
+    "missingConfig": "Authentication is not configured: set VITE_AUTH0_DOMAIN and VITE_AUTH0_CLIENT_ID.",
+    "mockUserName": "Test User",
+    "login": {
+      "metaTitle": "Sign in",
+      "metaDescription": "Sign in to your PostPilot account",
+      "title": "Sign in",
+      "description": "Sign in to create posts with the AI agent based on your documents.",
+      "action": "Sign in",
+      "switchText": "Don't have an account?",
+      "switchLink": "Create account"
+    },
+    "signup": {
+      "metaTitle": "Create account",
+      "metaDescription": "Create your PostPilot account",
+      "title": "Create account",
+      "description": "Sign up to organize your subjects, upload documents and generate posts for LinkedIn, Instagram and X.",
+      "action": "Create account",
+      "switchText": "Already have an account?",
+      "switchLink": "Sign in"
+    }
+  },
+  "userMenu": {
+    "label": "User menu",
+    "account": "Account",
+    "profile": "My profile",
+    "logout": "Sign out"
+  },
+  "profile": {
+    "title": "Profile",
+    "metaDescription": "Your account details",
+    "fallbackName": "User",
+    "emailVerified": "Email verified",
+    "emailNotVerified": "Email not verified",
+    "accessVia": "Signs in with {method}",
+    "methods": {
+      "auth0": "Email and password"
+    },
+    "security": "Security",
+    "passwordIntro": "To change your password, we will send a reset link to",
+    "changePassword": "Change password",
+    "sending": "Sending...",
+    "passwordSent": "Email sent. Follow the link to create your new password.",
+    "simulated": "(simulated in development mode)",
+    "passwordError": "Could not send the password reset email.",
+    "socialPassword": "You sign in with {method}, so your password is managed by that service.",
+    "session": "Session",
+    "sessionText": "Ends your session in this browser.",
+    "logout": "Sign out"
+  },
+  "error": {
+    "metaTitle": "Error",
+    "authTitle": "Could not sign you in",
+    "authGeneric": "An error occurred during authentication.",
+    "authCodes": {
+      "access_denied": "Access was denied. Check your details and try again.",
+      "login_required": "Your session has expired. Sign in again to continue.",
+      "consent_required": "You need to authorize PostPilot to continue."
+    },
+    "routeTitle": "Error {status}",
+    "routeMessage": "The page could not be loaded.",
+    "unexpectedTitle": "Something went wrong",
+    "unexpectedMessage": "An unexpected error occurred. Try again in a moment or go back to the dashboard.",
+    "retryLogin": "Try signing in again",
+    "retry": "Try again",
+    "goDashboard": "Go to dashboard"
+  },
+  "notFound": {
+    "metaTitle": "Page not found",
+    "title": "Page not found",
+    "message": "We couldn't find the page you are looking for.",
+    "back": "Back to dashboard"
+  },
+  "domain": {
+    "postStatus": {
+      "rascunho": "Draft",
+      "aprovado": "Approved",
+      "publicado": "Published"
+    },
+    "agentMode": {
+      "ideacao": "Ideation",
+      "criacao": "Creation"
+    },
+    "runStatus": {
+      "concluida": "Completed",
+      "erro": "Error",
+      "limite_atingido": "Limit reached"
+    },
+    "posts_one": "{count} post",
+    "posts_other": "{count} posts"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Your posts, the agent and performance across networks.",
+    "metaDescription": "Summary of your posts, the agent and performance",
+    "cards": {
+      "drafts": "Drafts",
+      "draftsHint": "awaiting review",
+      "approved": "Approved",
+      "approvedHint": "ready to publish",
+      "published": "Published",
+      "impressions": "{count} impressions",
+      "engagementRate": "Engagement rate",
+      "engagementHint": "interactions / impressions"
+    },
+    "byNetwork": {
+      "title": "Engagement by network",
+      "subtitle": "Interactions by type; engagement rate in parentheses",
+      "likes": "Likes",
+      "comments": "Comments",
+      "shares": "Shares",
+      "clicks": "Clicks"
+    },
+    "bestTime": {
+      "title": "Best day and time",
+      "subtitle": "Engagement rate by day of the week and time of day",
+      "morning": "Morning (6am–12pm)",
+      "afternoon": "Afternoon (12pm–6pm)",
+      "evening": "Evening (6pm–12am)",
+      "engagement": "Engagement: {value}",
+      "insufficient": "Not enough data (min. {min} posts)"
+    },
+    "bySubject": {
+      "title": "Performance by subject",
+      "subtitle": "Groups with fewer than {min} posts don't support conclusions yet",
+      "subject": "Subject",
+      "posts": "Posts",
+      "impressions": "Impressions",
+      "engagement": "Engagement",
+      "insufficient": "Not enough data"
+    },
+    "upcoming": {
+      "title": "Upcoming posts",
+      "subtitle": "Scheduled for the next few days",
+      "empty": "No posts scheduled."
+    },
+    "agentRuns": {
+      "title": "Latest agent runs",
+      "subtitle": "Recent requests and how many steps each took",
+      "empty": "The agent hasn't been used yet.",
+      "steps_one": "{count} step",
+      "steps_other": "{count} steps"
+    }
+  },
+  "calendar": {
+    "title": "Calendar",
+    "metaDescription": "Your posts organized by planned date",
+    "subtitle": "Your posts by planned publishing date.",
+    "today": "Today",
+    "more": "+{count} more",
+    "details": {
+      "scheduledFor": "Scheduled for",
+      "subject": "Subject",
+      "networks": "Networks",
+      "status": "Status",
+      "openPost": "Open post",
+      "postPageSoon": "The post editing page hasn't been built yet."
+    }
+  }
+}
